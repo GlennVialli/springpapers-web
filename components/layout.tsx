@@ -2,7 +2,17 @@ import Head from "next/head";
 import Link from "next/link";
 import React from "react";
 
-const Layout: React.FC = ({ children }) => {
+type RouterPath = `/#${string}`;
+export type RouterLayout = {
+  routerPath: RouterPath;
+  labelRoute: string;
+};
+
+type Props = {
+  routers: RouterLayout[];
+};
+
+const Layout: React.FC<Props> = ({ children, routers }) => {
   return (
     <>
       <Head>
@@ -12,16 +22,13 @@ const Layout: React.FC = ({ children }) => {
       </Head>
       <div className="header">
         <ul>
-          <li>
-            <Link href="/#home" shallow={true}>
-              <a>Home</a>
-            </Link>
-          </li>
-          <li>
-            <Link href="/#about" shallow={true}>
-              <a>About</a>
-            </Link>
-          </li>
+          {routers.map((r) => (
+            <li key={r.routerPath}>
+              <Link href={r.routerPath} shallow={true}>
+                <a>{r.labelRoute}</a>
+              </Link>
+            </li>
+          ))}
         </ul>
       </div>
       <div className="layout">{children}</div>
