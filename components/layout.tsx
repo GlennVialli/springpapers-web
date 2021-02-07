@@ -1,7 +1,6 @@
 import Head from "next/head";
 import Link from "next/link";
 import React from "react";
-import { useRouter } from "next/router";
 
 const Layout: React.FC = ({ children }) => {
   return (
