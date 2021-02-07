@@ -10,20 +10,21 @@ export default function Index() {
   const Router = useRouter();
 
   React.useEffect(() => {
-    Router.events.on("routeChangeStart", (url, x) => {
-      console.log(url, x);
-    });
-    // if (Router.pathname == "/") {
-    //   Router.push("/home");
-    // }
+    let id = Router.asPath.match(/#([a-z0-9]+)/gi);
+    if (id) {
+      // i will show the modal
+      console.log(id);
+    } else {
+      // something else
+    }
   }, [Router]);
 
   return (
     <Layout>
-      <section>
+      <section id="home" className="section">
         <Home />
       </section>
-      <section>
+      <section id="about" className="section">
         <About />
       </section>
     </Layout>
