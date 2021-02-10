@@ -54,9 +54,11 @@ export default function Index() {
 
   React.useEffect(() => {
     const onHashchange = () => {
+      const sectionRef = getSectionRef(sectionRefArr);
+      window.location.hash = sectionRef.routerLayout.routerPath.substring(2);
       scrollToSection({
         routerPath: "/" + window.location.hash,
-        sectionRefArr,
+        sectionRef,
         scrolledRefEl: mainRef,
         onStart: onStartScroll,
         onFinished: onFinishedScroll,
@@ -72,14 +74,7 @@ export default function Index() {
         2
       );
     }
-
-    scrollToSection({
-      routerPath,
-      sectionRefArr,
-      scrolledRefEl: mainRef,
-      onStart: onStartScroll,
-      onFinished: onFinishedScroll,
-    });
+    window.dispatchEvent(new HashChangeEvent("hashchange"));
   }, [Router]);
 
   return (
@@ -116,43 +111,44 @@ export default function Index() {
 // EXTRA FUNCTIONS
 const scrollToSection = (params: {
   routerPath: string;
-  sectionRefArr: SectionRef[];
+  sectionRef: SectionRef;
   scrolledRefEl: React.MutableRefObject<HTMLElement>;
   onStart?: () => void;
   onFinished?: () => void;
 }) => {
-  const {
-    routerPath,
-    sectionRefArr,
-    scrolledRefEl,
-    onFinished,
-    onStart,
-  } = params;
-  const sectionRefIdx = sectionRefArr.findIndex(
-    (s) => s.routerLayout.routerPath == routerPath
-  );
-  if (sectionRefIdx >= 0) {
-    const position = sectionRefArr[sectionRefIdx].ref.current.offsetTop - 100;
-    const scrollListener = (evt) => {
-      if (typeof evt === "undefined") {
-        return;
-      }
+  const { routerPath, sectionRef, scrolledRefEl, onFinished, onStart } = params;
 
-      const target = evt.currentTarget;
-
-      if (target.scrollTop === position) {
-        onFinished ? onFinished() : {};
-        target.removeEventListener("scroll", scrollListener);
-      }
-    };
-
-    if (scrolledRefEl.current.scrollTop !== position) {
-      onStart ? onStart() : {};
+  const position = sectionRef.ref.current.offsetTop - 100;
+  const scrollListener = (evt) => {
+    if (typeof evt === "undefined") {
+      return;
     }
-    scrolledRefEl.current.addEventListener("scroll", scrollListener);
-    scrolledRefEl.current.scrollTo({
-      behavior: "smooth",
-      top: position,
-    });
+
+    const target = evt.currentTarget;
+
+    if (target.scrollTop === position) {
+      onFinished ? onFinished() : {};
+      target.removeEventListener("scroll", scrollListener);
+    }
+  };
+
+  if (scrolledRefEl.current.scrollTop !== position) {
+    onStart ? onStart() : {};
   }
+  scrolledRefEl.current.addEventListener("scroll", scrollListener);
+  scrolledRefEl.current.scrollTo({
+    behavior: "smooth",
+    top: position,
+  });
+};
+
+const getSectionRef = (sectionRefArr: SectionRef[]) => {
+  const sectionRefIdx = sectionRefArr.findIndex(
+    (s) => s.routerLayout.routerPath == "/" + window.location.hash
+  );
+  if (sectionRefIdx < 0) {
+    console.error("Hash Link not found");
+    return sectionRefArr[0];
+  }
+  return sectionRefArr[sectionRefIdx];
 };
