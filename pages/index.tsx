@@ -42,25 +42,33 @@ export default function Index() {
   //   false
   // );
   const muteOnScrollRef = React.useRef<boolean>(false);
+  const muteDoScrollRef = React.useRef<boolean>(false);
   const sectionIdxRef = React.useRef<number>(0);
 
   const onFinishedScroll = () => {
     // setMuteOnScrollState(false);
     muteOnScrollRef.current = false;
+    mainRef.current.style.overflowY = "scroll";
   };
 
   const onStartScroll = () => {
     // setMuteOnScrollState(true);
     muteOnScrollRef.current = true;
+    mainRef.current.style.overflowY = "hidden";
   };
 
   React.useEffect(() => {
-    const onHashchange = () => {
+    console.log(muteDoScrollRef.current);
+    const doScroll = () => {
+      if (muteDoScrollRef.current) {
+        muteDoScrollRef.current = false;
+        return;
+      }
       const idx = sectionRefArr.findIndex(
         (s) => s.routerLayout.routerPath == "/" + window.location.hash
       );
       if (idx < 0) {
-        console.error("Hash Link not found");
+        console.error(window.location.hash + " Hash Link not found");
         sectionIdxRef.current = 0;
       } else {
         sectionIdxRef.current = idx;
@@ -75,8 +83,10 @@ export default function Index() {
         onFinished: onFinishedScroll,
       });
     };
-    window.addEventListener("hashchange", onHashchange);
-  }, []);
+
+    window.removeEventListener("hashchange", doScroll);
+    window.addEventListener("hashchange", doScroll);
+  }, [muteDoScrollRef.current]);
 
   React.useEffect(() => {
     const routerPath = Router.asPath;
@@ -85,6 +95,10 @@ export default function Index() {
         2
       );
     }
+
+    console.log(routerPath.substring(2));
+    window.location.hash = routerPath.substring(2);
+    // doScroll();
     window.dispatchEvent(new HashChangeEvent("hashchange"));
   }, [Router]);
 
@@ -102,15 +116,10 @@ export default function Index() {
             const p_diff = Math.abs(
               mainRef.current.scrollTop - p.ref.current.offsetTop
             );
-            console.log(
-              p.routerLayout.routerPath,
-              c.routerLayout.routerPath,
-              c_diff,
-              p_diff
-            );
             if (c_diff < p_diff) return c;
             else return p;
           });
+          muteDoScrollRef.current = true;
           window.location.hash = x.routerLayout.routerPath.substring(2);
         }}
       >
