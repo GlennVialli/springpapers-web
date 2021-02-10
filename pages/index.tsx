@@ -1,10 +1,9 @@
 import Home from "./home";
 import React from "react";
-import Link from "next/link";
 import { useRouter } from "next/dist/client/router";
-import Head from "next/head";
 import Layout, { RouterLayout } from "../components/layout";
 import About from "./about";
+import { difference } from "lodash";
 
 type SectionRef = {
   ref: React.MutableRefObject<HTMLElement>;
@@ -13,7 +12,6 @@ type SectionRef = {
 };
 
 type SectionRefMap = Record<string, SectionRef>;
-let oldScroll = 0;
 
 export default function Index() {
   const Router = useRouter();
@@ -40,24 +38,37 @@ export default function Index() {
   const sectionRefArr = Object.keys(sectionRefMap).map((k) => sectionRefMap[k]);
   const routers = sectionRefArr.map((s) => s.routerLayout);
 
-  const [muteOnScrollState, setMuteOnScrollState] = React.useState<boolean>(
-    false
-  );
+  // const [muteOnScrollState, setMuteOnScrollState] = React.useState<boolean>(
+  //   false
+  // );
+  const muteOnScrollRef = React.useRef<boolean>(false);
+  const sectionIdxRef = React.useRef<number>(0);
 
   const onFinishedScroll = () => {
-    setMuteOnScrollState(false);
+    // setMuteOnScrollState(false);
+    muteOnScrollRef.current = false;
   };
 
   const onStartScroll = () => {
-    setMuteOnScrollState(true);
+    // setMuteOnScrollState(true);
+    muteOnScrollRef.current = true;
   };
 
   React.useEffect(() => {
     const onHashchange = () => {
-      const sectionRef = getSectionRef(sectionRefArr);
+      const idx = sectionRefArr.findIndex(
+        (s) => s.routerLayout.routerPath == "/" + window.location.hash
+      );
+      if (idx < 0) {
+        console.error("Hash Link not found");
+        sectionIdxRef.current = 0;
+      } else {
+        sectionIdxRef.current = idx;
+      }
+
+      const sectionRef = sectionRefArr[sectionIdxRef.current];
       window.location.hash = sectionRef.routerLayout.routerPath.substring(2);
       scrollToSection({
-        routerPath: "/" + window.location.hash,
         sectionRef,
         scrolledRefEl: mainRef,
         onStart: onStartScroll,
@@ -78,22 +89,31 @@ export default function Index() {
   }, [Router]);
 
   return (
-    <div
-      className="Main"
-      ref={mainRef}
-      onScroll={() => {
-        if (muteOnScrollState) return;
-        if (mainRef.current.scrollTop > oldScroll) {
-          //scroll down
-          console.log("down");
-        } else {
-          //scroll up
-          console.log("up");
-        }
-        oldScroll = mainRef.current.scrollTop;
-      }}
-    >
-      <Layout routers={routers}>
+    <Layout routers={routers}>
+      <div
+        className="Main"
+        ref={mainRef}
+        onScroll={(e) => {
+          if (muteOnScrollRef.current) return;
+          const x = sectionRefArr.reduce((p, c) => {
+            const c_diff = Math.abs(
+              mainRef.current.scrollTop - c.ref.current.offsetTop
+            );
+            const p_diff = Math.abs(
+              mainRef.current.scrollTop - p.ref.current.offsetTop
+            );
+            console.log(
+              p.routerLayout.routerPath,
+              c.routerLayout.routerPath,
+              c_diff,
+              p_diff
+            );
+            if (c_diff < p_diff) return c;
+            else return p;
+          });
+          window.location.hash = x.routerLayout.routerPath.substring(2);
+        }}
+      >
         {sectionRefArr.map((s) => (
           <section
             ref={s.ref}
@@ -103,20 +123,19 @@ export default function Index() {
             {s.component}
           </section>
         ))}
-      </Layout>
-    </div>
+      </div>
+    </Layout>
   );
 }
 
 // EXTRA FUNCTIONS
 const scrollToSection = (params: {
-  routerPath: string;
   sectionRef: SectionRef;
   scrolledRefEl: React.MutableRefObject<HTMLElement>;
   onStart?: () => void;
   onFinished?: () => void;
 }) => {
-  const { routerPath, sectionRef, scrolledRefEl, onFinished, onStart } = params;
+  const { sectionRef, scrolledRefEl, onFinished, onStart } = params;
 
   const position = sectionRef.ref.current.offsetTop - 100;
   const scrollListener = (evt) => {
@@ -140,15 +159,4 @@ const scrollToSection = (params: {
     behavior: "smooth",
     top: position,
   });
-};
-
-const getSectionRef = (sectionRefArr: SectionRef[]) => {
-  const sectionRefIdx = sectionRefArr.findIndex(
-    (s) => s.routerLayout.routerPath == "/" + window.location.hash
-  );
-  if (sectionRefIdx < 0) {
-    console.error("Hash Link not found");
-    return sectionRefArr[0];
-  }
-  return sectionRefArr[sectionRefIdx];
 };
