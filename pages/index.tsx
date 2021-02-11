@@ -42,7 +42,6 @@ export default function Index() {
   //   false
   // );
   const muteOnScrollRef = React.useRef<boolean>(false);
-  const muteDoScrollRef = React.useRef<boolean>(false);
   const sectionIdxRef = React.useRef<number>(0);
 
   const onFinishedScroll = () => {
@@ -57,36 +56,32 @@ export default function Index() {
     mainRef.current.style.overflowY = "hidden";
   };
 
+  const doScroll = () => {
+    console.log("kontol");
+    const idx = sectionRefArr.findIndex(
+      (s) => s.routerLayout.routerPath == "/" + window.location.hash
+    );
+    if (idx < 0) {
+      console.error(window.location.hash + " Hash Link not found");
+      sectionIdxRef.current = 0;
+    } else {
+      sectionIdxRef.current = idx;
+    }
+
+    const sectionRef = sectionRefArr[sectionIdxRef.current];
+    window.location.hash = sectionRef.routerLayout.routerPath.substring(2);
+    scrollToSection({
+      sectionRef,
+      scrolledRefEl: mainRef,
+      onStart: onStartScroll,
+      onFinished: onFinishedScroll,
+    });
+  };
+
   React.useEffect(() => {
-    console.log(muteDoScrollRef.current);
-    const doScroll = () => {
-      if (muteDoScrollRef.current) {
-        muteDoScrollRef.current = false;
-        return;
-      }
-      const idx = sectionRefArr.findIndex(
-        (s) => s.routerLayout.routerPath == "/" + window.location.hash
-      );
-      if (idx < 0) {
-        console.error(window.location.hash + " Hash Link not found");
-        sectionIdxRef.current = 0;
-      } else {
-        sectionIdxRef.current = idx;
-      }
-
-      const sectionRef = sectionRefArr[sectionIdxRef.current];
-      window.location.hash = sectionRef.routerLayout.routerPath.substring(2);
-      scrollToSection({
-        sectionRef,
-        scrolledRefEl: mainRef,
-        onStart: onStartScroll,
-        onFinished: onFinishedScroll,
-      });
-    };
-
-    window.removeEventListener("hashchange", doScroll);
-    window.addEventListener("hashchange", doScroll);
-  }, [muteDoScrollRef.current]);
+    // console.log("kontol");
+    window.onhashchange = doScroll;
+  }, []);
 
   React.useEffect(() => {
     const routerPath = Router.asPath;
@@ -96,7 +91,7 @@ export default function Index() {
       );
     }
 
-    console.log(routerPath.substring(2));
+    window.onhashchange = doScroll;
     window.location.hash = routerPath.substring(2);
     // doScroll();
     window.dispatchEvent(new HashChangeEvent("hashchange"));
@@ -119,7 +114,10 @@ export default function Index() {
             if (c_diff < p_diff) return c;
             else return p;
           });
-          muteDoScrollRef.current = true;
+          window.onhashchange = function () {
+            // console.log("tol");
+            window.onhashchange = doScroll;
+          };
           window.location.hash = x.routerLayout.routerPath.substring(2);
         }}
       >
