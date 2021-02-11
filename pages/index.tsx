@@ -1,9 +1,8 @@
 import Home from "./home";
 import React from "react";
-import { useRouter } from "next/dist/client/router";
 import Layout, { RouterLayout } from "../components/layout";
 import About from "./about";
-import FullpageVertical from "../components/fullpage-vertical";
+import FullpageVertical from "../components/fullpage-vertical/fullpage-vertical";
 
 type SectionRef = {
   ref: React.MutableRefObject<HTMLElement>;
@@ -39,7 +38,7 @@ export default function Index() {
   return (
     <Layout routers={routers}>
       <FullpageVertical
-        autoScroll={false}
+        autoScroll={true}
         sectionRefArr={sectionRefArr.map((s) => ({
           routerPath: s.routerLayout.routerPath,
           ...s,

@@ -16,16 +16,6 @@ a {
   box-sizing: border-box;
 }
 
-.Main {
-  height: 100%;
-  overflow-y: scroll;
-}
-
-.section {
-  height: 100%;
-  margin-top: 100px;
-}
-
 .layout {
   height: 100%;
 }

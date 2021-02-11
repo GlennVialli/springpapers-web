@@ -1,4 +1,5 @@
 import React from "react";
+import styles from "./fullpage-vertical.module.scss";
 import { useRouter } from "next/dist/client/router";
 
 type RouterPath = `/#${string}`;
@@ -19,13 +20,13 @@ const FullpageVertical: React.FC<Props> = ({ sectionRefArr, autoScroll }) => {
   const { onScrollMain } = useFullpageVertical({
     autoScroll,
     sectionRefArr,
-    mainRef: mainRef.current,
+    mainRef,
   });
 
   return (
-    <div className="Main" ref={mainRef} onScroll={onScrollMain}>
+    <div className={styles.Main} ref={mainRef} onScroll={onScrollMain}>
       {sectionRefArr.map((s) => (
-        <section ref={s.ref} key={s.routerPath} className="section">
+        <section ref={s.ref} key={s.routerPath} className={styles.section}>
           {s.component}
         </section>
       ))}
@@ -37,7 +38,7 @@ const FullpageVertical: React.FC<Props> = ({ sectionRefArr, autoScroll }) => {
 const useFullpageVertical = (params: {
   sectionRefArr: FullpageVerticalSectionRef[];
   autoScroll: boolean;
-  mainRef: HTMLDivElement;
+  mainRef: React.MutableRefObject<HTMLDivElement>;
 }) => {
   const { sectionRefArr, autoScroll, mainRef } = params;
 
@@ -62,12 +63,12 @@ const useFullpageVertical = (params: {
 
   const onFinishedScroll = () => {
     muteOnScrollRef.current = false;
-    mainRef.style.overflowY = "scroll";
+    mainRef.current.style.overflowY = "scroll";
   };
 
   const onStartScroll = () => {
     muteOnScrollRef.current = true;
-    mainRef.style.overflowY = "hidden";
+    mainRef.current.style.overflowY = "hidden";
   };
 
   const onHashChange = () => {
@@ -85,7 +86,7 @@ const useFullpageVertical = (params: {
     window.location.hash = sectionRef.routerPath.substring(2);
     scrollToSection({
       sectionRef,
-      scrolledRefEl: mainRef,
+      scrolledRefEl: mainRef.current,
       onStart: onStartScroll,
       onFinished: onFinishedScroll,
     });
@@ -94,8 +95,12 @@ const useFullpageVertical = (params: {
   const onScrollMain = () => {
     if (muteOnScrollRef.current) return;
     const x = sectionRefArr.reduce((p, c) => {
-      const c_diff = Math.abs(mainRef.scrollTop - c.ref.current.offsetTop);
-      const p_diff = Math.abs(mainRef.scrollTop - p.ref.current.offsetTop);
+      const c_diff = Math.abs(
+        mainRef.current.scrollTop - c.ref.current.offsetTop
+      );
+      const p_diff = Math.abs(
+        mainRef.current.scrollTop - p.ref.current.offsetTop
+      );
       if (c_diff < p_diff) return c;
       else return p;
     });
