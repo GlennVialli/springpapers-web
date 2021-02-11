@@ -41,6 +41,25 @@ const useFullpageVertical = (params: {
 }) => {
   const { sectionRefArr, autoScroll, mainRef } = params;
 
+  const Router = useRouter();
+  const muteOnScrollRef = React.useRef<boolean>(false);
+  const sectionIdxRef = React.useRef<number>(0);
+
+  React.useEffect(() => {
+    window.onhashchange = onHashChange;
+  }, []);
+
+  React.useEffect(() => {
+    const routerPath = Router.asPath;
+    if (routerPath === "/" && sectionRefArr[0]) {
+      window.location.hash = sectionRefArr[0].routerPath.substring(2);
+    }
+
+    window.onhashchange = onHashChange;
+    window.location.hash = routerPath.substring(2);
+    window.dispatchEvent(new HashChangeEvent("hashchange"));
+  }, [Router]);
+
   const onFinishedScroll = () => {
     muteOnScrollRef.current = false;
     mainRef.style.overflowY = "scroll";
@@ -88,25 +107,6 @@ const useFullpageVertical = (params: {
 
     window.location.hash = x.routerPath.substring(2);
   };
-
-  const Router = useRouter();
-  const muteOnScrollRef = React.useRef<boolean>(false);
-  const sectionIdxRef = React.useRef<number>(0);
-
-  React.useEffect(() => {
-    window.onhashchange = onHashChange;
-  }, []);
-
-  React.useEffect(() => {
-    const routerPath = Router.asPath;
-    if (routerPath === "/" && sectionRefArr[0]) {
-      window.location.hash = sectionRefArr[0].routerPath.substring(2);
-    }
-
-    window.onhashchange = onHashChange;
-    window.location.hash = routerPath.substring(2);
-    window.dispatchEvent(new HashChangeEvent("hashchange"));
-  }, [Router]);
 
   return { onScrollMain };
 };
