@@ -3,6 +3,7 @@ import React from "react";
 import Layout, { RouterLayout } from "../components/layout";
 import About from "./about";
 import FullpageVertical from "../components/fullpage-vertical/fullpage-vertical";
+import FullpageHorizontal from "../components/fullpage-horizontal/fullpage-horizontal";
 
 type SectionRef = {
   ref: React.MutableRefObject<HTMLElement>;
@@ -36,8 +37,17 @@ export default function Index() {
   const routers = sectionRefArr.map((s) => s.routerLayout);
 
   return (
+    // <Layout routers={routers}>
+    //   <FullpageVertical
+    //     autoScroll={true}
+    //     sectionRefArr={sectionRefArr.map((s) => ({
+    //       routerPath: s.routerLayout.routerPath,
+    //       ...s,
+    //     }))}
+    //   />
+    // </Layout>
     <Layout routers={routers}>
-      <FullpageVertical
+      <FullpageHorizontal
         autoScroll={true}
         sectionRefArr={sectionRefArr.map((s) => ({
           routerPath: s.routerLayout.routerPath,

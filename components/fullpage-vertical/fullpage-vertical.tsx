@@ -125,7 +125,6 @@ const scrollToSection = (params: {
   onFinished?: () => void;
 }) => {
   const { sectionRef, scrolledRefEl, onFinished, onStart } = params;
-  if (!scrolledRefEl) return;
 
   const position = sectionRef.ref.current.offsetTop - 100;
   const scrollListener = (evt) => {
@@ -141,14 +140,25 @@ const scrollToSection = (params: {
     }
   };
 
-  if (scrolledRefEl.scrollTop !== position) {
+  if (scrolledRefEl && scrolledRefEl.scrollTop !== position) {
+    onStart ? onStart() : {};
+  } else if (window.screenTop !== position) {
     onStart ? onStart() : {};
   }
-  scrolledRefEl.addEventListener("scroll", scrollListener);
-  scrolledRefEl.scrollTo({
-    behavior: "smooth",
-    top: position,
-  });
+
+  if (scrolledRefEl) {
+    scrolledRefEl.addEventListener("scroll", scrollListener);
+    scrolledRefEl.scrollTo({
+      behavior: "smooth",
+      top: position,
+    });
+  } else {
+    window.addEventListener("scroll", scrollListener);
+    window.scrollTo({
+      behavior: "smooth",
+      top: position,
+    });
+  }
 };
 
 export default FullpageVertical;
