@@ -139,7 +139,7 @@ const scrollToSection = (params: {
 
   if (scrolledRefEl && scrolledRefEl.scrollLeft !== position) {
     onStart ? onStart() : {};
-  } else if (window.screenLeft !== position) {
+  } else if (!scrolledRefEl && window.screenLeft !== position) {
     onStart ? onStart() : {};
   }
 
