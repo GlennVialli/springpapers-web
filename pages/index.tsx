@@ -4,6 +4,7 @@ import Layout, { RouterLayout } from "../components/layout";
 import About from "./about";
 import FullpageVertical from "../components/fullpage-vertical/fullpage-vertical";
 import FullpageHorizontal from "../components/fullpage-horizontal/fullpage-horizontal";
+import Catalogue from "./catalogue";
 
 type SectionRef = {
   ref: React.MutableRefObject<HTMLElement>;
@@ -30,6 +31,14 @@ export default function Index() {
         labelRoute: "About",
       },
       component: <About />,
+    },
+    Catalogue: {
+      ref: React.useRef<HTMLElement>(),
+      routerLayout: {
+        routerPath: "/#catalogue",
+        labelRoute: "Catalogue",
+      },
+      component: <Catalogue />,
     },
   };
 
