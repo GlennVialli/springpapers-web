@@ -1,27 +1,28 @@
-import { useRouter } from "next/dist/client/router";
 import React from "react";
-import styles from "./fullpage-horizontal.module.scss";
+import styles from "./fullpage-vertical-hashroute.module.scss";
+import { useRouter } from "next/dist/client/router";
 
 type RouterPath = `/#${string}`;
 
-type FullpageHorizontalSectionRef = {
+type FullpageVerticalSectionRef = {
   ref: React.MutableRefObject<HTMLElement>;
   component: JSX.Element;
   routerPath: RouterPath;
 };
 
 type Props = {
-  sectionRefArr: FullpageHorizontalSectionRef[];
+  sectionRefArr: FullpageVerticalSectionRef[];
   autoScroll: boolean;
 };
 
-const FullpageHorizontal: React.FC<Props> = ({ sectionRefArr, autoScroll }) => {
+const FullpageVertical: React.FC<Props> = ({ sectionRefArr, autoScroll }) => {
   const mainRef = React.useRef<HTMLDivElement>();
-  const { onScrollMain } = useFullpageHorizontal({
+  const { onScrollMain } = useFullpageVertical({
+    autoScroll,
     sectionRefArr,
     mainRef,
-    autoScroll,
   });
+
   return (
     <div className={styles.Main} ref={mainRef} onScroll={onScrollMain}>
       {sectionRefArr.map((s) => (
@@ -34,12 +35,13 @@ const FullpageHorizontal: React.FC<Props> = ({ sectionRefArr, autoScroll }) => {
 };
 
 // HOOKS
-const useFullpageHorizontal = (params: {
-  sectionRefArr: FullpageHorizontalSectionRef[];
-  mainRef: React.MutableRefObject<HTMLDivElement>;
+const useFullpageVertical = (params: {
+  sectionRefArr: FullpageVerticalSectionRef[];
   autoScroll: boolean;
+  mainRef: React.MutableRefObject<HTMLDivElement>;
 }) => {
-  const { sectionRefArr, mainRef, autoScroll } = params;
+  const { sectionRefArr, autoScroll, mainRef } = params;
+
   const Router = useRouter();
   const muteOnScrollRef = React.useRef<boolean>(false);
   const sectionIdxRef = React.useRef<number>(0);
@@ -61,12 +63,12 @@ const useFullpageHorizontal = (params: {
 
   const onFinishedScroll = () => {
     muteOnScrollRef.current = false;
-    mainRef.current.style.overflowX = "scroll";
+    mainRef.current.style.overflowY = "scroll";
   };
 
   const onStartScroll = () => {
     muteOnScrollRef.current = true;
-    mainRef.current.style.overflowX = "hidden";
+    mainRef.current.style.overflowY = "hidden";
   };
 
   const onHashChange = () => {
@@ -94,10 +96,10 @@ const useFullpageHorizontal = (params: {
     if (muteOnScrollRef.current) return;
     const x = sectionRefArr.reduce((p, c) => {
       const c_diff = Math.abs(
-        mainRef.current.scrollLeft - c.ref.current.offsetLeft
+        mainRef.current.scrollTop - c.ref.current.offsetTop
       );
       const p_diff = Math.abs(
-        mainRef.current.scrollLeft - p.ref.current.offsetLeft
+        mainRef.current.scrollTop - p.ref.current.offsetTop
       );
       if (c_diff < p_diff) return c;
       else return p;
@@ -113,17 +115,18 @@ const useFullpageHorizontal = (params: {
 
   return { onScrollMain };
 };
+// END OF HOOKS
 
 // EXTRA FUNCTIONS
 const scrollToSection = (params: {
-  sectionRef: FullpageHorizontalSectionRef;
+  sectionRef: FullpageVerticalSectionRef;
   scrolledRefEl?: HTMLElement;
   onStart?: () => void;
   onFinished?: () => void;
 }) => {
   const { sectionRef, scrolledRefEl, onFinished, onStart } = params;
 
-  const position = sectionRef.ref.current.offsetLeft;
+  const position = sectionRef.ref.current.offsetTop - 100;
   const scrollListener = (evt) => {
     if (typeof evt === "undefined") {
       return;
@@ -131,15 +134,15 @@ const scrollToSection = (params: {
 
     const target = evt.currentTarget;
 
-    if (target.scrollLeft === position) {
+    if (target.scrollTop === position) {
       onFinished ? onFinished() : {};
       target.removeEventListener("scroll", scrollListener);
     }
   };
 
-  if (scrolledRefEl && scrolledRefEl.scrollLeft !== position) {
+  if (scrolledRefEl && scrolledRefEl.scrollTop !== position) {
     onStart ? onStart() : {};
-  } else if (!scrolledRefEl && window.screenLeft !== position) {
+  } else if (!scrolledRefEl && window.screenTop !== position) {
     onStart ? onStart() : {};
   }
 
@@ -147,15 +150,15 @@ const scrollToSection = (params: {
     scrolledRefEl.addEventListener("scroll", scrollListener);
     scrolledRefEl.scrollTo({
       behavior: "smooth",
-      left: position,
+      top: position,
     });
   } else {
     window.addEventListener("scroll", scrollListener);
     window.scrollTo({
       behavior: "smooth",
-      left: position,
+      top: position,
     });
   }
 };
 
-export default FullpageHorizontal;
+export default FullpageVertical;
