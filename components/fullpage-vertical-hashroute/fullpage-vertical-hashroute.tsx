@@ -15,7 +15,10 @@ type Props = {
   autoScroll: boolean;
 };
 
-const FullpageVertical: React.FC<Props> = ({ sectionRefArr, autoScroll }) => {
+const FullpageVerticalHashRoute: React.FC<Props> = ({
+  sectionRefArr,
+  autoScroll,
+}) => {
   const mainRef = React.useRef<HTMLDivElement>();
   const { onScrollMain } = useFullpageVertical({
     autoScroll,
@@ -161,4 +164,4 @@ const scrollToSection = (params: {
   }
 };
 
-export default FullpageVertical;
+export default FullpageVerticalHashRoute;
