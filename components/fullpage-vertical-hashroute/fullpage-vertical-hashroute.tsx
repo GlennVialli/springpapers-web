@@ -4,14 +4,14 @@ import { useRouter } from "next/dist/client/router";
 
 type RouterPath = `/#${string}`;
 
-type FullpageVerticalSectionRef = {
+type FullpageVerticalHashRouteRef = {
   ref: React.MutableRefObject<HTMLElement>;
   component: JSX.Element;
   routerPath: RouterPath;
 };
 
 type Props = {
-  sectionRefArr: FullpageVerticalSectionRef[];
+  sectionRefArr: FullpageVerticalHashRouteRef[];
   autoScroll: boolean;
 };
 
@@ -39,7 +39,7 @@ const FullpageVerticalHashRoute: React.FC<Props> = ({
 
 // HOOKS
 const useFullpageVertical = (params: {
-  sectionRefArr: FullpageVerticalSectionRef[];
+  sectionRefArr: FullpageVerticalHashRouteRef[];
   autoScroll: boolean;
   mainRef: React.MutableRefObject<HTMLDivElement>;
 }) => {
@@ -122,7 +122,7 @@ const useFullpageVertical = (params: {
 
 // EXTRA FUNCTIONS
 const scrollToSection = (params: {
-  sectionRef: FullpageVerticalSectionRef;
+  sectionRef: FullpageVerticalHashRouteRef;
   scrolledRefEl?: HTMLElement;
   onStart?: () => void;
   onFinished?: () => void;

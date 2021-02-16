@@ -16,8 +16,14 @@ a {
   box-sizing: border-box;
 }
 
-.layout {
+.layoutContainer {
+  display: flex;
+  flex-direction: row;
   height: 100%;
+}
+
+.layout {
+  width: 100%;
 }
 
 .header {
