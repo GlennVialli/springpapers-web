@@ -1,3 +1,4 @@
+import { Router, useRouter } from "next/dist/client/router";
 import React from "react";
 import { Cat1 } from "../components/catalogue-components/cat1";
 import { Cat2 } from "../components/catalogue-components/cat2";
@@ -23,6 +24,7 @@ const sectionRefArr: FullpageVerticalSectionRef[] = [
 
 const Catalogue: React.FC = () => {
   const [refIdx, setRefIdx] = React.useState<number>(0);
+  const router = useRouter();
   return (
     <div className={styles.container}>
       <h1>Catalogue</h1>
@@ -30,7 +32,11 @@ const Catalogue: React.FC = () => {
         sectionRefArr={sectionRefArr}
         selectedSection={sectionRefArr[refIdx]}
       />
-      <If condition={refIdx < sectionRefArr.length - 1}>
+      <If
+        condition={
+          refIdx < sectionRefArr.length - 1 && router.asPath == "/#catalogue"
+        }
+      >
         <button
           className={styles.nextButton}
           onClick={() => {

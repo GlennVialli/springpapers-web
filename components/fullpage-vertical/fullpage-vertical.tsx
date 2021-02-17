@@ -42,7 +42,7 @@ export const FullpageVertical: React.FC<Props> = ({
 
   return (
     <div
-      className={styles.Main}
+      className={[styles.Main, "fullpage-vertical-container"].join(" ")}
       ref={mainRef}
       onScroll={() => {
         if (onScrollMain) onScrollMain();

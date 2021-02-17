@@ -36,3 +36,14 @@ a {
 #__next {
   height: 100%;
 }
+
+.fullpage-vertical-container {
+  /* Hide scrollbar for IE, Edge and Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.fullpage-vertical-container::-webkit-scrollbar {
+  display: none;
+}
