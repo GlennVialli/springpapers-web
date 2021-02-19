@@ -14,6 +14,7 @@ type Props = {
 };
 
 export const FullpageVertical: React.FC<Props> = ({
+  children,
   sectionRefArr,
   selectedSection,
   onScrollMain,
@@ -97,7 +98,6 @@ const scrollToSection = (params: {
       top: position,
     });
   } else {
-    console.log("hallo");
     window.addEventListener("scroll", scrollListener);
     window.scrollTo({
       behavior: "smooth",
