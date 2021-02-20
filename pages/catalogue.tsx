@@ -28,7 +28,10 @@ const Catalogue: React.FC = () => {
   const [sectionRefs, setSectionRefs] = React.useState<
     React.RefObject<HTMLElement>[]
   >();
+  const muteOnScrollRef = React.useRef(false);
+  const fullpageRef = React.useRef<HTMLDivElement>();
   const router = useRouter();
+
   const onScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
     let limiter = 0;
     if (e.currentTarget.scrollTop > lastScrollTop) {
@@ -36,7 +39,7 @@ const Catalogue: React.FC = () => {
       limiter = 200;
     } else {
       // upscroll
-      limiter = -200;
+      limiter = -100;
     }
     lastScrollTop = e.currentTarget.scrollTop;
 
@@ -60,10 +63,20 @@ const Catalogue: React.FC = () => {
       <FullpageVertical
         sectionRefArr={sectionRefArr}
         selectedSection={sectionRefArr[refIdx]}
-        onSectionRefs={(refs) => {
-          setSectionRefs(refs);
+        onSectionRefs={setSectionRefs}
+        onScroll={(e) => {
+          if (muteOnScrollRef.current) return;
+          onScroll(e);
         }}
-        onScroll={onScroll}
+        onStartSectionScroll={() => {
+          muteOnScrollRef.current = true;
+          fullpageRef.current.style.overflowY = "hidden";
+        }}
+        onFinishedSectionScroll={() => {
+          muteOnScrollRef.current = false;
+          fullpageRef.current.style.overflowY = "scroll";
+        }}
+        ref={fullpageRef}
       />
       <If
         condition={

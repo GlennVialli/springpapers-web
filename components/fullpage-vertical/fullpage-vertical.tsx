@@ -14,55 +14,66 @@ type Props = {
   onSectionRefs?: (ref: React.RefObject<HTMLElement>[]) => void;
 };
 
-export const FullpageVertical: React.FC<Props> = ({
-  sectionRefArr,
-  selectedSection,
-  onScroll,
-  onStartSectionScroll,
-  onFinishedSectionScroll,
-  onSectionRefs,
-}) => {
-  const mainRef = React.useRef<HTMLDivElement>();
-  const sectionRefs = useSectionRefs(sectionRefArr);
+export const FullpageVertical = React.forwardRef<HTMLDivElement, Props>(
+  (
+    {
+      sectionRefArr,
+      selectedSection,
+      onScroll,
+      onStartSectionScroll,
+      onFinishedSectionScroll,
+      onSectionRefs,
+    },
+    ref: React.MutableRefObject<HTMLDivElement>
+  ) => {
+    const mainRef = React.useRef<HTMLDivElement>();
+    const sectionRefs = useSectionRefs(sectionRefArr);
 
-  React.useEffect(() => {
-    if (onSectionRefs) onSectionRefs(sectionRefs);
-  }, [sectionRefs]);
+    React.useEffect(() => {
+      // mainRef.current = ref;
+      ref.current = mainRef.current;
+    }, [mainRef, mainRef.current]);
 
-  React.useEffect(() => {
-    const idx = sectionRefArr.findIndex((s) => s == selectedSection);
-    if (idx < 0) {
-      console.error("section not found");
-      return;
-    }
-    scrollToSection({
-      destinationRef: sectionRefs[idx],
-      scrolledRefEl: mainRef.current,
-      onFinished: onFinishedSectionScroll,
-      onStart: onStartSectionScroll,
-    });
-  }, [selectedSection]);
+    React.useEffect(() => {
+      if (onSectionRefs) onSectionRefs(sectionRefs);
+    }, [sectionRefs]);
 
-  return (
-    <div
-      className={[styles.Main, "fullpage-vertical-container"].join(" ")}
-      ref={mainRef}
-      onScroll={(e) => {
-        if (onScroll) onScroll(e);
-      }}
-    >
-      {sectionRefArr.map((s, index) => (
-        <section
-          ref={sectionRefs[index]}
-          key={index}
-          className={styles.section}
-        >
-          {s.component}
-        </section>
-      ))}
-    </div>
-  );
-};
+    React.useEffect(() => {
+      const idx = sectionRefArr.findIndex((s) => s == selectedSection);
+      if (idx < 0) {
+        console.error("section not found");
+        return;
+      }
+      scrollToSection({
+        destinationRef: sectionRefs[idx],
+        scrolledRefEl: mainRef.current,
+        onFinished: onFinishedSectionScroll,
+        onStart: onStartSectionScroll,
+        offsetTopAdjustment: -sectionRefs[0].current.offsetTop,
+      });
+    }, [selectedSection]);
+
+    return (
+      <div
+        className={[styles.Main, "fullpage-vertical-container"].join(" ")}
+        ref={mainRef}
+        onScroll={(e) => {
+          if (onScroll) onScroll(e);
+        }}
+      >
+        {sectionRefArr.map((s, index) => (
+          <section
+            ref={sectionRefs[index]}
+            key={index}
+            className={styles.section}
+          >
+            {s.component}
+          </section>
+        ))}
+      </div>
+    );
+  }
+);
 
 // EXTRA HOOKS
 const useSectionRefs = (sectionRefArr: FullpageVerticalSectionRef[]) => {
@@ -78,10 +89,16 @@ const scrollToSection = (params: {
   scrolledRefEl?: HTMLElement;
   onStart?: () => void;
   onFinished?: () => void;
+  offsetTopAdjustment?: number;
 }) => {
   const { destinationRef, scrolledRefEl, onFinished, onStart } = params;
 
-  const position = destinationRef.current.offsetTop - 100;
+  const offsetTopAdjustment = params.offsetTopAdjustment
+    ? params.offsetTopAdjustment
+    : 0;
+
+  const position = destinationRef.current.offsetTop + offsetTopAdjustment;
+
   const scrollListener = (evt) => {
     if (typeof evt === "undefined") {
       return;
