@@ -30,7 +30,6 @@ export const FullpageVertical = React.forwardRef<HTMLDivElement, Props>(
     const sectionRefs = useSectionRefs(sectionRefArr);
 
     React.useEffect(() => {
-      // mainRef.current = ref;
       ref.current = mainRef.current;
     }, [mainRef, mainRef.current]);
 
