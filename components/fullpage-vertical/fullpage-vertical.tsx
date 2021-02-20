@@ -8,24 +8,26 @@ export type FullpageVerticalSectionRef = {
 type Props = {
   sectionRefArr: FullpageVerticalSectionRef[];
   selectedSection: FullpageVerticalSectionRef;
-  onScrollMain?: () => void;
+  onScroll?: (event: React.UIEvent<HTMLDivElement, UIEvent>) => void;
   onStartSectionScroll?: () => void;
   onFinishedSectionScroll?: () => void;
+  onSectionRefs?: (ref: React.RefObject<HTMLElement>[]) => void;
 };
 
 export const FullpageVertical: React.FC<Props> = ({
-  children,
   sectionRefArr,
   selectedSection,
-  onScrollMain,
+  onScroll,
   onStartSectionScroll,
   onFinishedSectionScroll,
+  onSectionRefs,
 }) => {
   const mainRef = React.useRef<HTMLDivElement>();
-  const sectionRefs = React.useMemo(
-    () => sectionRefArr.map(() => React.createRef<HTMLElement>()),
-    [sectionRefArr]
-  );
+  const sectionRefs = useSectionRefs(sectionRefArr);
+
+  React.useEffect(() => {
+    if (onSectionRefs) onSectionRefs(sectionRefs);
+  }, [sectionRefs]);
 
   React.useEffect(() => {
     const idx = sectionRefArr.findIndex((s) => s == selectedSection);
@@ -45,8 +47,8 @@ export const FullpageVertical: React.FC<Props> = ({
     <div
       className={[styles.Main, "fullpage-vertical-container"].join(" ")}
       ref={mainRef}
-      onScroll={() => {
-        if (onScrollMain) onScrollMain();
+      onScroll={(e) => {
+        if (onScroll) onScroll(e);
       }}
     >
       {sectionRefArr.map((s, index) => (
@@ -59,6 +61,14 @@ export const FullpageVertical: React.FC<Props> = ({
         </section>
       ))}
     </div>
+  );
+};
+
+// EXTRA HOOKS
+const useSectionRefs = (sectionRefArr: FullpageVerticalSectionRef[]) => {
+  return React.useMemo(
+    () => sectionRefArr.map(() => React.createRef<HTMLElement>()),
+    [sectionRefArr]
   );
 };
 

@@ -21,16 +21,49 @@ const sectionRefArr: FullpageVerticalSectionRef[] = [
     component: <Cat3 />,
   },
 ];
+var lastScrollTop = 0;
 
 const Catalogue: React.FC = () => {
   const [refIdx, setRefIdx] = React.useState<number>(0);
+  const [sectionRefs, setSectionRefs] = React.useState<
+    React.RefObject<HTMLElement>[]
+  >();
   const router = useRouter();
+  const onScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
+    let limiter = 0;
+    if (e.currentTarget.scrollTop > lastScrollTop) {
+      // downscroll
+      limiter = 200;
+    } else {
+      // upscroll
+      limiter = -200;
+    }
+    lastScrollTop = e.currentTarget.scrollTop;
+
+    const x = sectionRefs.reduce((p, c) => {
+      const c_diff = Math.abs(
+        e.currentTarget.scrollTop - c.current.offsetTop + limiter
+      );
+      const p_diff = Math.abs(
+        e.currentTarget.scrollTop - p.current.offsetTop + limiter
+      );
+      if (c_diff < p_diff) return c;
+      else return p;
+    });
+    const index = sectionRefs.findIndex((s) => s === x);
+    setRefIdx(index);
+  };
+
   return (
     <div className={styles.container}>
       <h1>Catalogue</h1>
       <FullpageVertical
         sectionRefArr={sectionRefArr}
         selectedSection={sectionRefArr[refIdx]}
+        onSectionRefs={(refs) => {
+          setSectionRefs(refs);
+        }}
+        onScroll={onScroll}
       />
       <If
         condition={
