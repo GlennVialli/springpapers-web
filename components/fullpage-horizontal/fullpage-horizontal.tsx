@@ -105,15 +105,15 @@ const scrollToSection = (params: {
 
     const target = evt.currentTarget;
 
-    if (target.scrollTop === position) {
+    if (target.scrollLeft === position) {
       onFinished ? onFinished() : {};
       target.removeEventListener("scroll", scrollListener);
     }
   };
 
-  if (scrolledRefEl && scrolledRefEl.scrollTop !== position) {
+  if (scrolledRefEl && scrolledRefEl.scrollLeft !== position) {
     onStart ? onStart() : {};
-  } else if (!scrolledRefEl && window.screenTop !== position) {
+  } else if (!scrolledRefEl && window.screenLeft !== position) {
     onStart ? onStart() : {};
   }
 
