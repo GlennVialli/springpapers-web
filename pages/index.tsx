@@ -46,17 +46,8 @@ export default function Index() {
   const routers = sectionRefArr.map((s) => s.routerLayout);
 
   return (
-    // <Layout routers={routers}>
-    //   <FullpageVertical
-    //     autoScroll={true}
-    //     sectionRefArr={sectionRefArr.map((s) => ({
-    //       routerPath: s.routerLayout.routerPath,
-    //       ...s,
-    //     }))}
-    //   />
-    // </Layout>
     <Layout routers={routers}>
-      <FullpageHorizontalHashRoute
+      <FullpageVerticalHashRoute
         autoScroll={true}
         sectionRouteRefArr={sectionRefArr.map((s) => ({
           routerPath: s.routerLayout.routerPath,
@@ -64,5 +55,14 @@ export default function Index() {
         }))}
       />
     </Layout>
+    // <Layout routers={routers}>
+    //   <FullpageHorizontalHashRoute
+    //     autoScroll={true}
+    //     sectionRouteRefArr={sectionRefArr.map((s) => ({
+    //       routerPath: s.routerLayout.routerPath,
+    //       ...s,
+    //     }))}
+    //   />
+    // </Layout>
   );
 }
