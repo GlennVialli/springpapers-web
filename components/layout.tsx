@@ -1,6 +1,9 @@
 import Head from "next/head";
 import Link from "next/link";
 import React from "react";
+import Tabs from "@material-ui/core/Tabs";
+import Tab from "@material-ui/core/Tab";
+import { Table } from "@material-ui/core";
 
 type RouterPath = `/#${string}`;
 export type RouterLayout = {
@@ -22,15 +25,13 @@ const Layout: React.FC<Props> = ({ children, routers }) => {
       </Head>
       <div className="layoutContainer">
         <div className="header">
-          <ul>
+          <Tabs>
             {routers.map((r) => (
-              <li key={r.routerPath}>
-                <Link href={r.routerPath} shallow={true}>
-                  <a>{r.labelRoute}</a>
-                </Link>
-              </li>
+              <Link href={r.routerPath} shallow={true} key={r.routerPath}>
+                <Tab label={r.labelRoute} />
+              </Link>
             ))}
-          </ul>
+          </Tabs>
         </div>
         <div className="layout">{children}</div>
       </div>

@@ -7,7 +7,7 @@ import styles from "../components/catalogue-components/catalogue.module.scss";
 import {
   FullpageVertical,
   FullpageVerticalSectionRef,
-} from "../components/fullpage-vertical/fullpage-vertical";
+} from "../components/fullpages/fullpage-vertical/fullpage-vertical";
 import { If } from "../components/If";
 
 const sectionRefArr: FullpageVerticalSectionRef[] = [
