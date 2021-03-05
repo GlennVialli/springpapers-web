@@ -1,5 +1,6 @@
 import { useRouter } from "next/dist/client/router";
 import React from "react";
+import { useHashRoute } from "../../../hooks/useHashRoute";
 import { FullpageHorizontal } from "../fullpage-horizontal/fullpage-horizontal";
 
 type RouterPath = `/#${string}`;
@@ -18,7 +19,7 @@ const FullpageHorizontalHashRoute: React.FC<Props> = ({
   sectionRouteRefArr,
   autoScroll,
 }) => {
-  const Router = useRouter();
+  const [hashRoute, setHashRoute] = useHashRoute();
   const muteOnScrollRef = React.useRef<boolean>(false);
   const mainRef = React.useRef<HTMLDivElement>();
   const [sectionRefs, setSectionRefs] = React.useState<
@@ -26,10 +27,16 @@ const FullpageHorizontalHashRoute: React.FC<Props> = ({
   >();
   const [sectionRefArr, setSectionRefArr] = React.useState([]);
   const [refIdx, setRefIdx] = React.useState<number>(0);
+  const [disableScroll, setDisableScroll] = React.useState(false);
 
-  React.useEffect(() => {
-    window.onhashchange = onHashChange;
-  }, []);
+  // React.useEffect(() => {
+  //   // window.onhashchange = onHashChange;
+  //   console.log(sectionRefs);
+  //   setTimeout(() => {
+  //     console.log("tit tot tit", sectionRefs);
+  //     setDisableScroll(true);
+  //   }, 3000);
+  // }, []);
 
   React.useEffect(() => {
     setSectionRefArr(
@@ -39,35 +46,49 @@ const FullpageHorizontalHashRoute: React.FC<Props> = ({
     );
   }, [sectionRouteRefArr]);
 
-  React.useEffect(() => {
-    const routerPath = Router.asPath;
-    if (routerPath === "/" && sectionRouteRefArr[0]) {
-      window.location.hash = sectionRouteRefArr[0].routerPath.substring(2);
-    }
+  // React.useEffect(() => {
+  //   const routerPath = Router.asPath;
+  //   if (routerPath === "/" && sectionRouteRefArr[0]) {
+  //     window.location.hash = sectionRouteRefArr[0].routerPath.substring(2);
+  //   }
 
-    window.onhashchange = onHashChange;
-    window.location.hash = routerPath.substring(2);
-    window.dispatchEvent(new HashChangeEvent("hashchange"));
-  }, [Router]);
+  //   window.onhashchange = onHashChange;
+  //   window.location.hash = routerPath.substring(2);
+  //   window.dispatchEvent(new HashChangeEvent("hashchange"));
+  // }, [Router]);
 
   React.useEffect(() => {
     const sectionRef = sectionRouteRefArr[refIdx];
     window.location.hash = sectionRef.routerPath.substring(2);
   }, [refIdx]);
 
-  const onHashChange = () => {
-    const idx = sectionRouteRefArr.findIndex(
-      (s) => s.routerPath == "/" + window.location.hash
-    );
+  // const onHashChange = () => {
+  //   const idx = sectionRouteRefArr.findIndex(
+  //     (s) => s.routerPath == "/" + window.location.hash
+  //   );
+  //   if (idx < 0) {
+  //     console.error(window.location.hash + " Hash Link not found");
+  //     setRefIdx(0);
+  //   } else {
+  //     setRefIdx(idx);
+  //   }
+  // };
+
+  React.useEffect(() => {
+    const idx = sectionRouteRefArr.findIndex((s) => s.routerPath == hashRoute);
     if (idx < 0) {
       console.error(window.location.hash + " Hash Link not found");
       setRefIdx(0);
     } else {
       setRefIdx(idx);
     }
-  };
+    if (disableScroll) {
+      setDisableScroll(false);
+    }
+  }, [hashRoute]);
 
   const onScrollMain = (event: React.UIEvent<HTMLDivElement, UIEvent>) => {
+    if (disableScroll) return;
     if (muteOnScrollRef.current) return;
     const x = sectionRefs.reduce((p, c) => {
       const c_diff = Math.abs(
@@ -79,14 +100,18 @@ const FullpageHorizontalHashRoute: React.FC<Props> = ({
       if (c_diff < p_diff) return c;
       else return p;
     });
-    if (autoScroll === false) {
-      window.onhashchange = function () {
-        window.onhashchange = onHashChange;
-      };
+    if (autoScroll === false && disableScroll === false) {
+      setDisableScroll(true);
     }
+    // if (autoScroll === false) {
+    //   window.onhashchange = function () {
+    //     window.onhashchange = onHashChange;
+    //   };
+    // }
     const index = sectionRefs.findIndex((s) => s == x);
-    window.location.hash = sectionRouteRefArr[index].routerPath.substring(2);
-    window.dispatchEvent(new HashChangeEvent("hashchange"));
+    setHashRoute(sectionRouteRefArr[index].routerPath);
+    // window.location.hash = sectionRouteRefArr[index].routerPath.substring(2);
+    // window.dispatchEvent(new HashChangeEvent("hashchange"));
   };
 
   return (
@@ -103,6 +128,7 @@ const FullpageHorizontalHashRoute: React.FC<Props> = ({
         mainRef.current.style.overflowX = "scroll";
       }}
       onScroll={onScrollMain}
+      disableScroll={disableScroll}
       ref={mainRef}
     />
   );

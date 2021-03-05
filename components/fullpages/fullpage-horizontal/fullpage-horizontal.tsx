@@ -12,6 +12,7 @@ type Props = {
   onStartSectionScroll?: () => void;
   onFinishedSectionScroll?: () => void;
   onSectionRefs?: (ref: React.RefObject<HTMLElement>[]) => void;
+  disableScroll?: boolean;
 };
 
 export const FullpageHorizontal = React.forwardRef<HTMLDivElement, Props>(
@@ -23,6 +24,7 @@ export const FullpageHorizontal = React.forwardRef<HTMLDivElement, Props>(
       onStartSectionScroll,
       onFinishedSectionScroll,
       onSectionRefs,
+      disableScroll,
     },
     ref: React.MutableRefObject<HTMLDivElement>
   ) => {
@@ -38,9 +40,18 @@ export const FullpageHorizontal = React.forwardRef<HTMLDivElement, Props>(
     }, [sectionRefs]);
 
     React.useEffect(() => {
+      console.log("fh", disableScroll, sectionRefs);
+      if (onSectionRefs) onSectionRefs(sectionRefs);
+    }, [disableScroll]);
+
+    React.useEffect(() => {
       const idx = sectionRefArr.findIndex((s) => s == selectedSection);
       if (idx < 0) {
         console.error("section not found");
+        return;
+      }
+      console.log(disableScroll);
+      if (disableScroll) {
         return;
       }
       scrollToSection({
