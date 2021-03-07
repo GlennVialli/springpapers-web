@@ -1,5 +1,4 @@
 import React from "react";
-import { useRouter } from "next/dist/client/router";
 import { FullpageVertical } from "../fullpage-vertical/fullpage-vertical";
 import { useHashRoute } from "../../../hooks/useHashRoute";
 
@@ -31,7 +30,7 @@ const FullpageVerticalHashRoute: React.FC<Props> = ({
     }))
   );
   const [refIdx, setRefIdx] = React.useState(0);
-  const [disableScroll, setDisableScroll] = React.useState(false);
+  const [disableSectionScroll, setDisableSectionScroll] = React.useState(false);
   const scrollTimeRef = React.useRef<NodeJS.Timeout>();
 
   React.useEffect(() => {
@@ -61,15 +60,15 @@ const FullpageVerticalHashRoute: React.FC<Props> = ({
       if (c_diff < p_diff) return c;
       else return p;
     });
-    if (autoScroll === false && disableScroll === false) {
-      setDisableScroll(true);
+    if (autoScroll === false && disableSectionScroll === false) {
+      setDisableSectionScroll(true);
     }
 
     if (scrollTimeRef.current) clearTimeout(scrollTimeRef.current);
     scrollTimeRef.current = setTimeout(() => {
       scrollTimeRef.current = undefined;
-      if (disableScroll) {
-        setDisableScroll(false);
+      if (disableSectionScroll) {
+        setDisableSectionScroll(false);
       }
     }, 1000);
 
@@ -92,7 +91,7 @@ const FullpageVerticalHashRoute: React.FC<Props> = ({
       }}
       onScroll={onScrollMain}
       ref={mainRef}
-      disableScroll={disableScroll}
+      disableSectionScroll={disableSectionScroll}
     />
   );
 };

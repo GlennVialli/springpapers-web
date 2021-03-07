@@ -36,10 +36,10 @@ const Catalogue: React.FC = () => {
     let limiter = 0;
     if (e.currentTarget.scrollTop > lastScrollTop) {
       // downscroll
-      limiter = 200;
+      limiter = 350;
     } else {
       // upscroll
-      limiter = -100;
+      limiter = -350;
     }
     lastScrollTop = e.currentTarget.scrollTop;
 

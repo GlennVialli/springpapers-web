@@ -12,7 +12,7 @@ type Props = {
   onStartSectionScroll?: () => void;
   onFinishedSectionScroll?: () => void;
   onSectionRefs?: (ref: React.RefObject<HTMLElement>[]) => void;
-  disableScroll?: boolean;
+  disableSectionScroll?: boolean;
 };
 
 export const FullpageVertical = React.forwardRef<HTMLDivElement, Props>(
@@ -24,7 +24,7 @@ export const FullpageVertical = React.forwardRef<HTMLDivElement, Props>(
       onStartSectionScroll,
       onFinishedSectionScroll,
       onSectionRefs,
-      disableScroll,
+      disableSectionScroll,
     },
     ref: React.MutableRefObject<HTMLDivElement>
   ) => {
@@ -46,7 +46,7 @@ export const FullpageVertical = React.forwardRef<HTMLDivElement, Props>(
         return;
       }
 
-      if (disableScroll) {
+      if (disableSectionScroll) {
         onFinishedSectionScroll();
         return;
       }

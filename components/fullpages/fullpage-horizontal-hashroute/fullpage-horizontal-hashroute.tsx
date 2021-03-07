@@ -31,7 +31,7 @@ const FullpageHorizontalHashRoute: React.FC<Props> = ({
     }))
   );
   const [refIdx, setRefIdx] = React.useState<number>(0);
-  const [disableScroll, setDisableScroll] = React.useState(false);
+  const [disableSectionScroll, setDisableSectionScroll] = React.useState(false);
   const scrollTimeRef = React.useRef<NodeJS.Timeout>();
 
   React.useEffect(() => {
@@ -61,15 +61,15 @@ const FullpageHorizontalHashRoute: React.FC<Props> = ({
       if (c_diff < p_diff) return c;
       else return p;
     });
-    if (autoScroll === false && disableScroll === false) {
-      setDisableScroll(true);
+    if (autoScroll === false && disableSectionScroll === false) {
+      setDisableSectionScroll(true);
     }
 
     if (scrollTimeRef.current) clearTimeout(scrollTimeRef.current);
     scrollTimeRef.current = setTimeout(() => {
       scrollTimeRef.current = undefined;
-      if (disableScroll) {
-        setDisableScroll(false);
+      if (disableSectionScroll) {
+        setDisableSectionScroll(false);
       }
     }, 1000);
 
@@ -91,7 +91,7 @@ const FullpageHorizontalHashRoute: React.FC<Props> = ({
         mainRef.current.style.overflowX = "scroll";
       }}
       onScroll={onScrollMain}
-      disableScroll={disableScroll}
+      disableSectionScroll={disableSectionScroll}
       ref={mainRef}
     />
   );
