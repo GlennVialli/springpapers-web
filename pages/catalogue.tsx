@@ -45,10 +45,16 @@ const Catalogue: React.FC = () => {
 
     const x = sectionRefs.reduce((p, c) => {
       const c_diff = Math.abs(
-        e.currentTarget.scrollTop - c.current.offsetTop + limiter
+        e.currentTarget.scrollTop -
+          c.current.offsetTop +
+          limiter +
+          fullpageRef.current.offsetTop
       );
       const p_diff = Math.abs(
-        e.currentTarget.scrollTop - p.current.offsetTop + limiter
+        e.currentTarget.scrollTop -
+          p.current.offsetTop +
+          limiter +
+          fullpageRef.current.offsetTop
       );
       if (c_diff < p_diff) return c;
       else return p;
