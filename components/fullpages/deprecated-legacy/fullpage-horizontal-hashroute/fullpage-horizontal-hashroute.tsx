@@ -1,5 +1,5 @@
 import React from "react";
-import { useHashRoute } from "../../../hooks/useHashRoute";
+import { useHashRoute } from "../../../../hooks/useHashRoute";
 import { FullpageHorizontal } from "../fullpage-horizontal/fullpage-horizontal";
 
 type RouterPath = `/#${string}`;

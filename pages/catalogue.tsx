@@ -4,10 +4,11 @@ import { Cat1 } from "../components/catalogue-components/cat1";
 import { Cat2 } from "../components/catalogue-components/cat2";
 import { Cat3 } from "../components/catalogue-components/cat3";
 import styles from "../components/catalogue-components/catalogue.module.scss";
+import { FullpageBase } from "../components/fullpages/fullpage-base/fullpage-base";
 import {
   FullpageVertical,
   FullpageVerticalSectionRef,
-} from "../components/fullpages/fullpage-vertical/fullpage-vertical";
+} from "../components/fullpages/deprecated-legacy/fullpage-vertical/fullpage-vertical";
 import { If } from "../components/If";
 
 const sectionRefArr: FullpageVerticalSectionRef[] = [
@@ -64,12 +65,12 @@ const Catalogue: React.FC = () => {
   };
 
   return (
-    <div className={styles.container}>
+    <div className={[styles.container, "catalogue-container"].join(" ")}>
       <h1>Catalogue</h1>
-      <FullpageVertical
+      <FullpageBase
         sectionRefArr={sectionRefArr}
         selectedSection={sectionRefArr[refIdx]}
-        onSectionRefs={setSectionRefs}
+        onLoadSectionRefs={setSectionRefs}
         onScroll={(e) => {
           if (muteOnScrollRef.current) return;
           onScroll(e);
@@ -82,6 +83,7 @@ const Catalogue: React.FC = () => {
           muteOnScrollRef.current = false;
           fullpageRef.current.style.overflowY = "scroll";
         }}
+        direction={"vertical"}
         ref={fullpageRef}
       />
       <If
