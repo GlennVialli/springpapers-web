@@ -169,13 +169,6 @@ const scrollToSection = (params: {
   }
 
   scrolledRefEl.addEventListener("scroll", scrollListener);
-  // scrolledRefEl.scrollTo(
-  //   directionSetterValue({
-  //     horizontalValue: { behavior: "smooth", left: position },
-  //     verticalValue: { behavior: "smooth", top: position },
-  //     direction,
-  //   })
-  // );
 
   directionSetterValue({
     direction,
