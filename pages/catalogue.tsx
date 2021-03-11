@@ -84,6 +84,7 @@ const Catalogue: React.FC = () => {
           fullpageRef.current.style.overflowY = "scroll";
         }}
         direction={"vertical"}
+        scrollDuration={1300}
         ref={fullpageRef}
       />
       <If

@@ -2,6 +2,8 @@ import { dir } from "console";
 import React from "react";
 import { DirectionType, directionSetterValue } from "../direction-utils";
 import styles from "./fullpage-base.module.scss";
+import Scroll from "scroll";
+import { inOutSine } from "../ease-utils";
 
 export type FullpageBaseRef = {
   component: JSX.Element;
@@ -15,6 +17,8 @@ type Props = {
   onFinishedSectionScroll?: () => void;
   onLoadSectionRefs?: (ref: React.RefObject<HTMLElement>[]) => void;
   disableSectionScroll?: boolean;
+  scrollDuration?: number;
+  scrollEase?: (time: number) => number;
   direction: DirectionType;
 };
 
@@ -28,6 +32,8 @@ export const FullpageBase = React.forwardRef<HTMLDivElement, Props>(
       onFinishedSectionScroll,
       onLoadSectionRefs,
       disableSectionScroll,
+      scrollDuration,
+      scrollEase,
       direction,
     },
     ref: React.MutableRefObject<HTMLDivElement>
@@ -70,6 +76,8 @@ export const FullpageBase = React.forwardRef<HTMLDivElement, Props>(
         onStart: onStartSectionScroll,
         offsetAdjustment,
         direction,
+        scrollDuration: scrollDuration ? scrollDuration : 2500,
+        scrollEase: scrollEase ? scrollEase : inOutSine,
       });
     }, [selectedSection]);
 
@@ -106,6 +114,8 @@ const scrollToSection = (params: {
   onStart?: () => void;
   onFinished?: () => void;
   offsetAdjustment?: number;
+  scrollDuration: number;
+  scrollEase: (time: number) => number;
   direction: "horizontal" | "vertical";
 }) => {
   const {
@@ -114,6 +124,8 @@ const scrollToSection = (params: {
     onStart,
     direction,
     scrolledRefEl,
+    scrollDuration,
+    scrollEase,
   } = params;
 
   const offsetAdjustment = params.offsetAdjustment
@@ -157,11 +169,23 @@ const scrollToSection = (params: {
   }
 
   scrolledRefEl.addEventListener("scroll", scrollListener);
-  scrolledRefEl.scrollTo(
-    directionSetterValue({
-      horizontalValue: { behavior: "smooth", left: position },
-      verticalValue: { behavior: "smooth", top: position },
-      direction,
-    })
-  );
+  // scrolledRefEl.scrollTo(
+  //   directionSetterValue({
+  //     horizontalValue: { behavior: "smooth", left: position },
+  //     verticalValue: { behavior: "smooth", top: position },
+  //     direction,
+  //   })
+  // );
+
+  directionSetterValue({
+    direction,
+    horizontalValue: Scroll.left(scrolledRefEl, position, {
+      duration: scrollDuration,
+      ease: scrollEase,
+    }),
+    verticalValue: Scroll.top(scrolledRefEl, position, {
+      duration: scrollDuration,
+      ease: scrollEase,
+    }),
+  });
 };

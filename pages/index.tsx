@@ -2,8 +2,6 @@ import Home from "./home";
 import React from "react";
 import Layout, { RouterLayout } from "../components/layout";
 import About from "./about";
-import FullpageVerticalHashRoute from "../components/fullpages/deprecated-legacy/fullpage-vertical-hashroute/fullpage-vertical-hashroute";
-import FullpageHorizontalHashRoute from "../components/fullpages/deprecated-legacy/fullpage-horizontal-hashroute/fullpage-horizontal-hashroute";
 import Catalogue from "./catalogue";
 import { FullpageHashRoute } from "../components/fullpages/fullpage-hashroute/fullpage-hashroute";
 
@@ -47,24 +45,6 @@ export default function Index() {
   const routers = sectionRefArr.map((s) => s.routerLayout);
 
   return (
-    // <Layout routers={routers}>
-    //   <FullpageVerticalHashRoute
-    //     autoScroll={false}
-    //     sectionRouteRefArr={sectionRefArr.map((s) => ({
-    //       routerPath: s.routerLayout.routerPath,
-    //       ...s,
-    //     }))}
-    //   />
-    // </Layout>
-    // <Layout routers={routers}>
-    //   <FullpageHorizontalHashRoute
-    //     autoScroll={true}
-    //     sectionRouteRefArr={sectionRefArr.map((s) => ({
-    //       routerPath: s.routerLayout.routerPath,
-    //       ...s,
-    //     }))}
-    //   />
-    // </Layout>
     <Layout routers={routers}>
       <FullpageHashRoute
         autoScroll={true}

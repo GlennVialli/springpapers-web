@@ -1,6 +1,7 @@
 import React from "react";
 import { useHashRoute } from "../../../hooks/useHashRoute";
 import { DirectionType, directionSetterValue } from "../direction-utils";
+import { inOutSine } from "../ease-utils";
 import { FullpageBase, FullpageBaseRef } from "../fullpage-base/fullpage-base";
 
 type RouterPath = `/#${string}`;
@@ -13,12 +14,16 @@ type Props = {
   sectionRouteRefArr: FullpageRouterSectionRef[];
   autoScroll: boolean;
   direction: DirectionType;
+  scrollDuration?: number;
+  scrollEase?: (time: number) => number;
 };
 
 export const FullpageHashRoute: React.FC<Props> = ({
   sectionRouteRefArr,
   autoScroll,
   direction,
+  scrollDuration,
+  scrollEase,
 }) => {
   const [hashRoute, setHashRoute] = useHashRoute();
   const muteOnScrollRef = React.useRef<boolean>(false);
@@ -113,6 +118,8 @@ export const FullpageHashRoute: React.FC<Props> = ({
       onScroll={onScrollMain}
       disableSectionScroll={disableSectionScroll}
       direction={direction}
+      scrollDuration={scrollDuration ? scrollDuration : 2500}
+      scrollEase={scrollEase ? scrollEase : inOutSine}
       ref={mainRef}
     />
   );
