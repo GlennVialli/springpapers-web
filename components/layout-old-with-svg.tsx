@@ -48,6 +48,63 @@ const Layout: React.FC<Props> = ({ children, routers }) => {
               </Link>
             ))}
           </Tabs>
+
+          {/* <svg
+            width="100%"
+            height="100%"
+            viewBox="0 0 100 100"
+            preserveAspectRatio="none"
+            style={{
+              position: "absolute",
+              top: "0",
+              height: "100vh",
+            }}
+          >
+            <path
+              d="M 0 12 H 32 C 37 12, 37 12, 38 11 Q 50 -3 61 11 C 61 11 62 12 63 12 H 100"
+              stroke="black"
+              fill="transparent"
+              strokeWidth=".1"
+            />
+          </svg> */}
+
+          <svg
+            width="100%"
+            height="100%"
+            viewBox="0 0 100 100"
+            preserveAspectRatio="none"
+            style={{
+              position: "absolute",
+              top: "0",
+              height: "100vh",
+            }}
+          >
+            <path
+              d="M 0 12 H 33 C 33 12, 37 12, 38 11 Q 50 -2 62 11 C 62 11, 63 12, 67 12 H 100"
+              stroke="black"
+              fill="transparent"
+              strokeWidth=".1"
+            />
+          </svg>
+
+          {/* <svg
+            width="100%"
+            height="100%"
+            viewBox="0 0 100 100"
+            preserveAspectRatio="none"
+            style={{
+              position: "absolute",
+              top: "0",
+              height: "100vh",
+            }}
+          >
+            <path
+              d={`M 0 ${(116.28 * 100) / windowSize.height} H 100`}
+              stroke="black"
+              fill="transparent"
+              strokeWidth=".1"
+            />
+          </svg> */}
         </div>
         <div className="layout">{children}</div>
       </div>
