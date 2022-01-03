@@ -26,9 +26,8 @@ var lastScrollTop = 0;
 
 const Catalogue: React.FC = () => {
   const [refIdx, setRefIdx] = React.useState<number>(0);
-  const [sectionRefs, setSectionRefs] = React.useState<
-    React.RefObject<HTMLElement>[]
-  >();
+  const [sectionRefs, setSectionRefs] =
+    React.useState<React.RefObject<HTMLElement>[]>();
   const muteOnScrollRef = React.useRef(false);
   const fullpageRef = React.useRef<HTMLDivElement>();
   const router = useRouter();
@@ -86,6 +85,7 @@ const Catalogue: React.FC = () => {
         direction={"vertical"}
         scrollDuration={1300}
         ref={fullpageRef}
+        maxOffset={1}
       />
       <If
         condition={

@@ -20,6 +20,7 @@ type Props = {
   scrollDuration?: number;
   scrollEase?: (time: number) => number;
   direction: DirectionType;
+  maxOffset?: number;
 };
 
 export const FullpageBase = React.forwardRef<HTMLDivElement, Props>(
@@ -35,6 +36,7 @@ export const FullpageBase = React.forwardRef<HTMLDivElement, Props>(
       scrollDuration,
       scrollEase,
       direction,
+      maxOffset,
     },
     ref: React.MutableRefObject<HTMLDivElement>
   ) => {
@@ -78,6 +80,7 @@ export const FullpageBase = React.forwardRef<HTMLDivElement, Props>(
         direction,
         scrollDuration: scrollDuration ? scrollDuration : 2500,
         scrollEase: scrollEase ? scrollEase : inOutSine,
+        maxOffset: maxOffset ? maxOffset : 0,
       });
     }, [selectedSection]);
 
@@ -117,6 +120,7 @@ const scrollToSection = (params: {
   scrollDuration: number;
   scrollEase: (time: number) => number;
   direction: "horizontal" | "vertical";
+  maxOffset: number;
 }) => {
   const {
     destinationRef,
@@ -126,6 +130,7 @@ const scrollToSection = (params: {
     scrolledRefEl,
     scrollDuration,
     scrollEase,
+    maxOffset,
   } = params;
 
   const offsetAdjustment = params.offsetAdjustment
@@ -152,7 +157,8 @@ const scrollToSection = (params: {
       direction,
     });
 
-    if (targetScrollPosition === position) {
+    const offset = Math.abs(targetScrollPosition - position);
+    if (offset >= 0 && offset <= maxOffset) {
       onFinished ? onFinished() : {};
       target.removeEventListener("scroll", scrollListener);
     }
