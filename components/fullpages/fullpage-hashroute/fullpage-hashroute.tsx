@@ -28,9 +28,8 @@ export const FullpageHashRoute: React.FC<Props> = ({
   const [hashRoute, setHashRoute] = useHashRoute();
   const muteOnScrollRef = React.useRef<boolean>(false);
   const mainRef = React.useRef<HTMLDivElement>();
-  const [sectionRefs, setSectionRefs] = React.useState<
-    React.RefObject<HTMLElement>[]
-  >();
+  const [sectionRefs, setSectionRefs] =
+    React.useState<React.RefObject<HTMLElement>[]>();
 
   const sectionRefArr = React.useRef(
     sectionRouteRefArr.map((s) => ({
