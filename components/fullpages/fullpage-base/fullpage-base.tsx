@@ -24,79 +24,66 @@ type Props = {
 };
 
 export const FullpageBase = React.forwardRef<HTMLDivElement, Props>(
-  (
-    {
-      sectionRefArr,
-      selectedSection,
-      onScroll,
-      onStartSectionScroll,
-      onFinishedSectionScroll,
-      onLoadSectionRefs,
-      disableSectionScroll,
-      scrollDuration,
-      scrollEase,
-      direction,
-      maxOffset,
-    },
-    ref: React.MutableRefObject<HTMLDivElement>
-  ) => {
+  (params, ref: React.MutableRefObject<HTMLDivElement>) => {
     const mainRef = React.useRef<HTMLDivElement>();
     const sectionRefs = React.useMemo(
-      () => sectionRefArr.map(() => React.createRef<HTMLElement>()),
-      [sectionRefArr]
+      () => params.sectionRefArr.map(() => React.createRef<HTMLElement>()),
+      [params.sectionRefArr]
     );
     React.useEffect(() => {
       ref.current = mainRef.current;
     }, [mainRef, mainRef.current]);
 
     React.useEffect(() => {
-      if (onLoadSectionRefs) onLoadSectionRefs(sectionRefs);
+      params.onLoadSectionRefs?.(sectionRefs);
     }, [sectionRefs]);
 
     React.useEffect(() => {
-      const idx = sectionRefArr.findIndex((s) => s == selectedSection);
+      const idx = params.sectionRefArr.findIndex(
+        (s) => s == params.selectedSection
+      );
       if (idx < 0) {
         console.error("section not found");
         return;
       }
 
-      if (disableSectionScroll) {
-        onFinishedSectionScroll();
+      if (params.disableSectionScroll) {
+        params.onFinishedSectionScroll?.();
         return;
       }
 
       const offsetAdjustment = directionSetterValue({
         horizontalValue: -sectionRefs[0].current.offsetLeft,
         verticalValue: -sectionRefs[0].current.offsetTop,
-        direction,
+        direction: params.direction,
       });
 
       scrollToSection({
         destinationRef: sectionRefs[idx],
         scrolledRefEl: mainRef.current,
-        onFinished: onFinishedSectionScroll,
-        onStart: onStartSectionScroll,
+        onFinished: params.onFinishedSectionScroll,
+        onStart: params.onStartSectionScroll,
         offsetAdjustment,
-        direction,
-        scrollDuration: scrollDuration ? scrollDuration : 2500,
-        scrollEase: scrollEase ? scrollEase : inOutSine,
-        maxOffset: maxOffset ? maxOffset : 0,
+        direction: params.direction,
+        scrollDuration: params.scrollDuration ?? 2500,
+        scrollEase: params.scrollEase ?? inOutSine,
+        maxOffset: params.maxOffset ?? 0,
       });
-    }, [selectedSection]);
+    }, [params.selectedSection]);
 
     return (
       <div
         className={[
           styles.Main,
           "fullpage-base-container",
-          styles[direction],
+          styles[params.direction],
         ].join(" ")}
         ref={mainRef}
         onScroll={(e) => {
-          if (onScroll) onScroll(e);
+          params.onScroll?.(e);
         }}
       >
-        {sectionRefArr.map((s, index) => (
+        {params.sectionRefArr.map((s, index) => (
           <section
             ref={sectionRefs[index]}
             key={index}
@@ -122,25 +109,14 @@ const scrollToSection = (params: {
   direction: "horizontal" | "vertical";
   maxOffset: number;
 }) => {
-  const {
-    destinationRef,
-    onFinished,
-    onStart,
-    direction,
-    scrolledRefEl,
-    scrollDuration,
-    scrollEase,
-    maxOffset,
-  } = params;
-
   const offsetAdjustment = params.offsetAdjustment
     ? params.offsetAdjustment
     : 0;
 
   const offset = directionSetterValue({
-    horizontalValue: destinationRef.current.offsetLeft,
-    verticalValue: destinationRef.current.offsetTop,
-    direction,
+    horizontalValue: params.destinationRef.current.offsetLeft,
+    verticalValue: params.destinationRef.current.offsetTop,
+    direction: params.direction,
   })!;
 
   const position = offset + offsetAdjustment;
@@ -154,37 +130,39 @@ const scrollToSection = (params: {
     const targetScrollPosition = directionSetterValue({
       horizontalValue: target.scrollLeft,
       verticalValue: target.scrollTop,
-      direction,
+      direction: params.direction,
     });
 
     const offset = Math.abs(targetScrollPosition - position);
-    if (offset >= 0 && offset <= maxOffset) {
-      onFinished ? onFinished() : {};
+    if (offset >= 0 && offset <= params.maxOffset) {
+      params.onFinished?.();
       target.removeEventListener("scroll", scrollListener);
     }
   };
 
   if (
     directionSetterValue({
-      horizontalValue: scrolledRefEl && scrolledRefEl.scrollLeft !== position,
-      verticalValue: scrolledRefEl && scrolledRefEl.scrollTop !== position,
-      direction,
+      horizontalValue:
+        params.scrolledRefEl && params.scrolledRefEl.scrollLeft !== position,
+      verticalValue:
+        params.scrolledRefEl && params.scrolledRefEl.scrollTop !== position,
+      direction: params.direction,
     })
   ) {
-    onStart ? onStart() : {};
+    params.onStart?.();
   }
 
-  scrolledRefEl.addEventListener("scroll", scrollListener);
+  params.scrolledRefEl.addEventListener("scroll", scrollListener);
 
   directionSetterValue({
-    direction,
-    horizontalValue: Scroll.left(scrolledRefEl, position, {
-      duration: scrollDuration,
-      ease: scrollEase,
+    direction: params.direction,
+    horizontalValue: Scroll.left(params.scrolledRefEl, position, {
+      duration: params.scrollDuration,
+      ease: params.scrollEase,
     }),
-    verticalValue: Scroll.top(scrolledRefEl, position, {
-      duration: scrollDuration,
-      ease: scrollEase,
+    verticalValue: Scroll.top(params.scrolledRefEl, position, {
+      duration: params.scrollDuration,
+      ease: params.scrollEase,
     }),
   });
 };

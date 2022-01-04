@@ -81,6 +81,7 @@ export const FullpageHashRoute: React.FC<Props> = ({
       setDisableSectionScroll(true);
     }
 
+    // For Scroll End
     if (scrollTimeRef.current) clearTimeout(scrollTimeRef.current);
     scrollTimeRef.current = setTimeout(() => {
       scrollTimeRef.current = undefined;
