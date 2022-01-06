@@ -1,4 +1,10 @@
-import React from "react";
+import React, {
+  HTMLProps,
+  PropsWithRef,
+  ReactElement,
+  ReactNode,
+  RefAttributes,
+} from "react";
 import styles from "../components/fullpages/fullpage-base-experimental/fullpage-base-experimental.module.scss";
 import {
   directionSetterValue,
@@ -10,7 +16,7 @@ import { FullpageBaseRef } from "../components/fullpages/fullpage-base/fullpage-
 
 // EXTRA FUNCTIONS
 const scrollToSection = (params: {
-  destinationRef: React.RefObject<HTMLElement>;
+  destinationRef: HTMLElement;
   scrolledRefEl: HTMLElement;
   onStart?: () => void;
   onFinished?: () => void;
@@ -25,8 +31,8 @@ const scrollToSection = (params: {
     : 0;
 
   const offset = directionSetterValue({
-    horizontalValue: params.destinationRef.current.offsetLeft,
-    verticalValue: params.destinationRef.current.offsetTop,
+    horizontalValue: params.destinationRef.offsetLeft,
+    verticalValue: params.destinationRef.offsetTop,
     direction: params.direction,
   })!;
 
@@ -78,8 +84,23 @@ const scrollToSection = (params: {
   });
 };
 
-type Props = {
-  sectionRefArr: FullpageBaseRef[];
+interface PropsFullpageSection {}
+const FullpageSection = (_p: {}) =>
+  React.forwardRef<
+    HTMLElement,
+    PropsFullpageSection & React.HTMLProps<HTMLElement>
+  >((params, ref: React.MutableRefObject<HTMLElement>) => {
+    return (
+      <section
+        ref={ref}
+        className={[styles.section, "fullpage-base-section"].join(" ")}
+      >
+        {params.children}
+      </section>
+    );
+  });
+
+type PropsFullpageBase = {
   direction: DirectionType;
   selectedIndex: number;
   disableSectionScroll?: boolean;
@@ -91,111 +112,90 @@ type Props = {
   onFinishedSectionScroll?: () => void;
 };
 
-const FullpageBaseExperimental = (_p: {
-  onLoadSectionRefs: (
-    ref: {
-      ref: React.RefObject<HTMLElement>;
-      component: React.ReactChild | React.ReactFragment | React.ReactPortal;
-    }[]
-  ) => void;
-}) =>
-  React.forwardRef<HTMLDivElement, Props & React.HTMLProps<HTMLDivElement>>(
-    (params, ref: React.MutableRefObject<HTMLDivElement>) => {
-      const mainRef = React.useRef<HTMLDivElement>();
-      const sectionRefs = React.useMemo(
-        () =>
-          params.sectionRefArr.map((s) => ({
-            ref: React.createRef<HTMLElement>(),
-            component: s.component,
-          })),
-        [params.sectionRefArr]
-      );
+const FullpageBaseExperimental = (_p: {}) =>
+  React.forwardRef<
+    HTMLDivElement,
+    PropsFullpageBase & React.HTMLProps<HTMLDivElement>
+  >((params, ref: React.MutableRefObject<HTMLDivElement>) => {
+    const mainRef = React.useRef<HTMLDivElement>();
+    const sectionRefs = React.useRef<HTMLElement[]>(
+      Array(React.Children.toArray(params.children).length)
+    );
 
-      React.useEffect(() => {
-        ref.current = mainRef.current;
-      }, [mainRef, mainRef.current]);
+    // console.log(sectionRefs.current);
+    React.useEffect(() => {
+      ref.current = mainRef.current;
+    }, [mainRef, mainRef.current]);
 
-      React.useEffect(() => {
-        _p.onLoadSectionRefs?.([...sectionRefs]);
-      }, [sectionRefs]);
+    React.useEffect(() => {
+      const idx = params.selectedIndex;
+      console.log(idx);
+      if (idx < 0) {
+        console.error("section not found");
+        return;
+      }
 
-      React.useEffect(() => {
-        const idx = params.selectedIndex;
-        if (idx < 0) {
-          console.error("section not found");
-          return;
-        }
+      if (params.disableSectionScroll) {
+        params.onFinishedSectionScroll?.();
+        return;
+      }
 
-        if (params.disableSectionScroll) {
-          params.onFinishedSectionScroll?.();
-          return;
-        }
+      if (!sectionRefs.current[0]) return;
+      const offsetAdjustment = directionSetterValue({
+        horizontalValue: -sectionRefs.current[0].offsetLeft,
+        verticalValue: -sectionRefs.current[0].offsetTop,
+        direction: params.direction,
+      });
 
-        if (!sectionRefs[0]) return;
-        const offsetAdjustment = directionSetterValue({
-          horizontalValue: -sectionRefs[0].ref.current.offsetLeft,
-          verticalValue: -sectionRefs[0].ref.current.offsetTop,
-          direction: params.direction,
-        });
+      scrollToSection({
+        destinationRef: sectionRefs.current[idx],
+        scrolledRefEl: mainRef.current,
+        onFinished: params.onFinishedSectionScroll,
+        onStart: params.onStartSectionScroll,
+        offsetAdjustment,
+        direction: params.direction,
+        scrollDuration: params.scrollDuration ?? 2500,
+        scrollEase: params.scrollEase ?? inOutSine,
+        maxOffset: params.maxOffset ?? 0,
+      });
+    }, [params.selectedIndex]);
 
-        scrollToSection({
-          destinationRef: sectionRefs[idx].ref,
-          scrolledRefEl: mainRef.current,
-          onFinished: params.onFinishedSectionScroll,
-          onStart: params.onStartSectionScroll,
-          offsetAdjustment,
-          direction: params.direction,
-          scrollDuration: params.scrollDuration ?? 2500,
-          scrollEase: params.scrollEase ?? inOutSine,
-          maxOffset: params.maxOffset ?? 0,
-        });
-      }, [params.selectedIndex]);
-
-      return (
-        <div
-          className={[
-            styles.Main,
-            "fullpage-base-container",
-            styles[params.direction],
-          ].join(" ")}
-          ref={mainRef}
-          onScroll={(e) => {
-            params.onScroll?.(e);
-          }}
-        >
-          {sectionRefs.map((s, index) => (
-            <section
-              ref={sectionRefs[index].ref}
-              key={index}
-              className={[styles.section, "fullpage-base-section"].join(" ")}
-            >
-              {s.component}
-            </section>
-          ))}
-        </div>
-      );
-    }
-  );
+    return (
+      <div
+        className={[
+          styles.Main,
+          "fullpage-base-container",
+          styles[params.direction],
+        ].join(" ")}
+        ref={mainRef}
+        onScroll={(e) => {
+          params.onScroll?.(e);
+        }}
+      >
+        {React.Children.toArray(params.children).map((s, index) => {
+          const childEl = React.Children.only(s);
+          return React.cloneElement(childEl as React.ReactElement<any>, {
+            ref: (r) => {
+              if ((s as any).ref) {
+                if (typeof (s as any).ref === "function") (s as any).ref?.(r);
+                else (s as any).ref.current = r;
+              }
+              sectionRefs.current[index] = r;
+            },
+          });
+        })}
+      </div>
+    );
+  });
 
 export const useFullPage = () => {
-  const [sectionRefs, setSectionRefs] = React.useState<
-    {
-      ref: React.RefObject<HTMLElement>;
-      component: React.ReactChild | React.ReactFragment | React.ReactPortal;
-    }[]
-  >();
-
   return {
     FullpageBaseExperimental: React.useMemo(
-      () =>
-        FullpageBaseExperimental({
-          onLoadSectionRefs: setSectionRefs,
-        }),
-      [setSectionRefs]
+      () => FullpageBaseExperimental({}),
+      []
     ),
-    getSectionRefs: React.useCallback(
-      () => sectionRefs?.map((s) => s.ref),
-      [sectionRefs]
-    ),
+    FullpageSection: React.useMemo(() => {
+      return FullpageSection({});
+    }, []),
   };
 };

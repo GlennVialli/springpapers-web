@@ -30,15 +30,24 @@ const Catalogue: React.FC = () => {
     []
   );
   const [refIdx, setRefIdx] = React.useState<number>(0);
-  const { FullpageBaseExperimental, getSectionRefs } = useFullPage();
+  const { FullpageBaseExperimental, FullpageSection } = useFullPage();
   // const [sectionRefs, setSectionRefs] =
   //   React.useState<React.RefObject<HTMLElement>[]>();
-  const sectionRefs = getSectionRefs();
+  // const sectionRefs = getSectionRefs();
+  const section1 = React.useRef<HTMLElement>();
+  const section2 = React.useRef<HTMLElement>();
+  const section3 = React.useRef<HTMLElement>();
+
+  const sectionRefs = React.useMemo(
+    () => [section1, section2, section3],
+    [section1, section2, section3]
+  );
+  // const sectionRefs = React.useRef<HTMLElement[]>(Array(3));
   const muteOnScrollRef = React.useRef(false);
   const fullpageRef = React.useRef<HTMLDivElement>();
   const router = useRouter();
 
-  // console.log(sectionRefs);
+  // console.log(sectionRefs.current);
   const onScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
     let limiter = 0;
     if (e.currentTarget.scrollTop > lastScrollTop) {
@@ -67,6 +76,7 @@ const Catalogue: React.FC = () => {
       else return p;
     });
     const index = sectionRefs.findIndex((s) => s === x);
+    // console.log(index);
     setRefIdx(index);
   };
 
@@ -74,7 +84,6 @@ const Catalogue: React.FC = () => {
     <div className={[styles.container, "catalogue-container"].join(" ")}>
       <h1>Catalogue</h1>
       <FullpageBaseExperimental
-        sectionRefArr={sectionRefArr}
         selectedIndex={refIdx}
         onScroll={(e) => {
           if (muteOnScrollRef.current) return;
@@ -93,9 +102,15 @@ const Catalogue: React.FC = () => {
         ref={fullpageRef}
         maxOffset={1}
       >
-        {/* <Cat1></Cat1>
-        <Cat2></Cat2>
-        <Cat3></Cat3> */}
+        <FullpageSection ref={section1}>
+          <Cat1></Cat1>
+        </FullpageSection>
+        <FullpageSection ref={section2}>
+          <Cat2></Cat2>
+        </FullpageSection>
+        <FullpageSection ref={section3}>
+          <Cat3></Cat3>
+        </FullpageSection>
       </FullpageBaseExperimental>
       <If
         condition={
