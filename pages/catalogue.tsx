@@ -4,12 +4,13 @@ import { Cat1 } from "../components/catalogue-components/cat1";
 import { Cat2 } from "../components/catalogue-components/cat2";
 import { Cat3 } from "../components/catalogue-components/cat3";
 import styles from "../components/catalogue-components/catalogue.module.scss";
-import { FullpageBase } from "../components/fullpages/fullpage-base/fullpage-base";
+// import { FullpageBase } from "../components/fullpages/fullpage-base/fullpage-base";
 import {
   FullpageVertical,
   FullpageVerticalSectionRef,
 } from "../components/fullpages/deprecated-legacy/fullpage-vertical/fullpage-vertical";
 import { If } from "../components/If";
+import { useFullPage } from "../hooks/useFullPage";
 
 const sectionRefArr: FullpageVerticalSectionRef[] = [
   {
@@ -26,12 +27,15 @@ var lastScrollTop = 0;
 
 const Catalogue: React.FC = () => {
   const [refIdx, setRefIdx] = React.useState<number>(0);
-  const [sectionRefs, setSectionRefs] =
-    React.useState<React.RefObject<HTMLElement>[]>();
+  const { FullpageBaseExperimental, getSectionRefs } = useFullPage();
+  // const [sectionRefs, setSectionRefs] =
+  //   React.useState<React.RefObject<HTMLElement>[]>();
+  const sectionRefs = getSectionRefs();
   const muteOnScrollRef = React.useRef(false);
   const fullpageRef = React.useRef<HTMLDivElement>();
   const router = useRouter();
 
+  // console.log(sectionRefs);
   const onScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
     let limiter = 0;
     if (e.currentTarget.scrollTop > lastScrollTop) {
@@ -66,10 +70,9 @@ const Catalogue: React.FC = () => {
   return (
     <div className={[styles.container, "catalogue-container"].join(" ")}>
       <h1>Catalogue</h1>
-      <FullpageBase
+      <FullpageBaseExperimental
         sectionRefArr={sectionRefArr}
-        selectedSection={sectionRefArr[refIdx]}
-        onLoadSectionRefs={setSectionRefs}
+        selectedIndex={refIdx}
         onScroll={(e) => {
           if (muteOnScrollRef.current) return;
           onScroll(e);
@@ -86,7 +89,11 @@ const Catalogue: React.FC = () => {
         scrollDuration={1300}
         ref={fullpageRef}
         maxOffset={1}
-      />
+      >
+        {/* <Cat1></Cat1>
+        <Cat2></Cat2>
+        <Cat3></Cat3> */}
+      </FullpageBaseExperimental>
       <If
         condition={
           refIdx < sectionRefArr.length - 1 && router.asPath == "/#catalogue"
