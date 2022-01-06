@@ -92,33 +92,24 @@ type Props = {
 };
 
 const FullpageBaseExperimental = (_p: {
-  onLoadSectionRefs: (ref: React.RefObject<HTMLElement>[]) => void;
+  onLoadSectionRefs: (
+    ref: {
+      ref: React.RefObject<HTMLElement>;
+      component: React.ReactChild | React.ReactFragment | React.ReactPortal;
+    }[]
+  ) => void;
 }) =>
   React.forwardRef<HTMLDivElement, Props & React.HTMLProps<HTMLDivElement>>(
     (params, ref: React.MutableRefObject<HTMLDivElement>) => {
       const mainRef = React.useRef<HTMLDivElement>();
       const sectionRefs = React.useMemo(
-        () => params.sectionRefArr.map(() => React.createRef<HTMLElement>()),
+        () =>
+          params.sectionRefArr.map((s) => ({
+            ref: React.createRef<HTMLElement>(),
+            component: s.component,
+          })),
         [params.sectionRefArr]
       );
-
-      // const sectionRefs = React.useMemo(
-      //   () =>
-      //     params.sectionRefArr.map((s) => ({
-      //       ref: React.createRef<HTMLElement>(),
-      //       component: s.component,
-      //     })),
-      //   [params.sectionRefArr]
-      // );
-
-      // const sectionRefs = React.useMemo(
-      //   () =>
-      //     React.Children.toArray(params.children).map((s) => ({
-      //       ref: React.createRef<HTMLElement>(),
-      //       component: s,
-      //     })),
-      //   [params.children]
-      // );
 
       React.useEffect(() => {
         ref.current = mainRef.current;
@@ -126,7 +117,7 @@ const FullpageBaseExperimental = (_p: {
 
       React.useEffect(() => {
         _p.onLoadSectionRefs?.([...sectionRefs]);
-      }, [params.sectionRefArr]);
+      }, [sectionRefs]);
 
       React.useEffect(() => {
         const idx = params.selectedIndex;
@@ -142,13 +133,13 @@ const FullpageBaseExperimental = (_p: {
 
         if (!sectionRefs[0]) return;
         const offsetAdjustment = directionSetterValue({
-          horizontalValue: -sectionRefs[0].current.offsetLeft,
-          verticalValue: -sectionRefs[0].current.offsetTop,
+          horizontalValue: -sectionRefs[0].ref.current.offsetLeft,
+          verticalValue: -sectionRefs[0].ref.current.offsetTop,
           direction: params.direction,
         });
 
         scrollToSection({
-          destinationRef: sectionRefs[idx],
+          destinationRef: sectionRefs[idx].ref,
           scrolledRefEl: mainRef.current,
           onFinished: params.onFinishedSectionScroll,
           onStart: params.onStartSectionScroll,
@@ -172,9 +163,9 @@ const FullpageBaseExperimental = (_p: {
             params.onScroll?.(e);
           }}
         >
-          {params.sectionRefArr.map((s, index) => (
+          {sectionRefs.map((s, index) => (
             <section
-              ref={sectionRefs[index]}
+              ref={sectionRefs[index].ref}
               key={index}
               className={[styles.section, "fullpage-base-section"].join(" ")}
             >
@@ -187,8 +178,12 @@ const FullpageBaseExperimental = (_p: {
   );
 
 export const useFullPage = () => {
-  const [sectionRefs, setSectionRefs] =
-    React.useState<React.RefObject<HTMLElement>[]>();
+  const [sectionRefs, setSectionRefs] = React.useState<
+    {
+      ref: React.RefObject<HTMLElement>;
+      component: React.ReactChild | React.ReactFragment | React.ReactPortal;
+    }[]
+  >();
 
   return {
     FullpageBaseExperimental: React.useMemo(
@@ -198,6 +193,9 @@ export const useFullPage = () => {
         }),
       [setSectionRefs]
     ),
-    getSectionRefs: React.useCallback(() => sectionRefs, [sectionRefs]),
+    getSectionRefs: React.useCallback(
+      () => sectionRefs?.map((s) => s.ref),
+      [sectionRefs]
+    ),
   };
 };

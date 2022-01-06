@@ -12,20 +12,23 @@ import {
 import { If } from "../components/If";
 import { useFullPage } from "../hooks/useFullPage";
 
-const sectionRefArr: FullpageVerticalSectionRef[] = [
-  {
-    component: <Cat1 />,
-  },
-  {
-    component: <Cat2 />,
-  },
-  {
-    component: <Cat3 />,
-  },
-];
 var lastScrollTop = 0;
 
 const Catalogue: React.FC = () => {
+  const sectionRefArr = React.useMemo<FullpageVerticalSectionRef[]>(
+    () => [
+      {
+        component: <Cat1 />,
+      },
+      {
+        component: <Cat2 />,
+      },
+      {
+        component: <Cat3 />,
+      },
+    ],
+    []
+  );
   const [refIdx, setRefIdx] = React.useState<number>(0);
   const { FullpageBaseExperimental, getSectionRefs } = useFullPage();
   // const [sectionRefs, setSectionRefs] =
