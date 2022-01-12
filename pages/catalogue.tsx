@@ -1,36 +1,22 @@
-import { Router, useRouter } from "next/dist/client/router";
+import { useRouter } from "next/dist/client/router";
 import React from "react";
 import { Cat1 } from "../components/catalogue-components/cat1";
 import { Cat2 } from "../components/catalogue-components/cat2";
 import { Cat3 } from "../components/catalogue-components/cat3";
 import styles from "../components/catalogue-components/catalogue.module.scss";
-// import { FullpageBase } from "../components/fullpages/fullpage-base/fullpage-base";
-import {
-  FullpageVertical,
-  FullpageVerticalSectionRef,
-} from "../components/fullpages/deprecated-legacy/fullpage-vertical/fullpage-vertical";
 import { If } from "../components/If";
 import { useFullPage } from "../hooks/useFullPage";
 
 var lastScrollTop = 0;
 
 const Catalogue: React.FC = () => {
-  const sectionRefArr = React.useMemo<FullpageVerticalSectionRef[]>(
-    () => [
-      {
-        component: <Cat1 />,
-      },
-      {
-        component: <Cat2 />,
-      },
-      {
-        component: <Cat3 />,
-      },
-    ],
-    []
-  );
-  const [refIdx, setRefIdx] = React.useState<number>(0);
-  const { FullpageBaseExperimental, FullpageSection } = useFullPage();
+  const {
+    FullpageBase,
+    FullpageSection,
+    fullpageBaseProps,
+    goToSectionByIndex,
+    getCurrentSectionIndex,
+  } = useFullPage();
   // const [sectionRefs, setSectionRefs] =
   //   React.useState<React.RefObject<HTMLElement>[]>();
   // const sectionRefs = getSectionRefs();
@@ -76,15 +62,17 @@ const Catalogue: React.FC = () => {
       else return p;
     });
     const index = sectionRefs.findIndex((s) => s === x);
-    // console.log(index);
-    setRefIdx(index);
+
+    if (getCurrentSectionIndex() != index) {
+      goToSectionByIndex(index);
+    }
   };
 
   return (
     <div className={[styles.container, "catalogue-container"].join(" ")}>
       <h1>Catalogue</h1>
-      <FullpageBaseExperimental
-        selectedIndex={refIdx}
+      <FullpageBase
+        {...fullpageBaseProps}
         onScroll={(e) => {
           if (muteOnScrollRef.current) return;
           onScroll(e);
@@ -111,18 +99,13 @@ const Catalogue: React.FC = () => {
         <FullpageSection ref={section3}>
           <Cat3></Cat3>
         </FullpageSection>
-      </FullpageBaseExperimental>
-      <If
-        condition={
-          refIdx < sectionRefArr.length - 1 && router.asPath == "/#catalogue"
-        }
-      >
+      </FullpageBase>
+      <If condition={router.asPath == "/#catalogue"}>
         <button
           className={styles.nextButton}
           onClick={() => {
-            const nextIdx = refIdx + 1;
-            if (nextIdx > sectionRefArr.length - 1) return;
-            setRefIdx(nextIdx);
+            const nextIdx = getCurrentSectionIndex() + 1;
+            goToSectionByIndex(nextIdx);
           }}
         >
           NEXT
