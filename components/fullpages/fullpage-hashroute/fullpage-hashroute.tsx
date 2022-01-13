@@ -1,4 +1,5 @@
 import React from "react";
+import { useFullPage } from "../../../hooks/useFullPage";
 import { useHashRoute } from "../../../hooks/useHashRoute";
 import { DirectionType, directionSetterValue } from "../direction-utils";
 import { inOutSine } from "../ease-utils";
@@ -25,80 +26,72 @@ export const FullpageHashRoute: React.FC<Props> = ({
   scrollDuration,
   scrollEase,
 }) => {
+  const {
+    FullpageBase,
+    FullpageSection,
+    fullpageBaseProps,
+    getCurrentSectionIndex,
+    goToSectionByIndex,
+  } = useFullPage();
   const [hashRoute, setHashRoute] = useHashRoute();
   const muteOnScrollRef = React.useRef<boolean>(false);
   const mainRef = React.useRef<HTMLDivElement>();
-  const [sectionRefs, setSectionRefs] =
-    React.useState<React.RefObject<HTMLElement>[]>();
-
-  const sectionRefArr = React.useRef(
-    sectionRouteRefArr.map((s) => ({
-      component: s.component,
-    }))
+  const sectionRefs = React.useRef<HTMLElement[]>(
+    Array(sectionRouteRefArr.length)
   );
-  const [refIdx, setRefIdx] = React.useState<number>(0);
+
   const [disableSectionScroll, setDisableSectionScroll] = React.useState(false);
-  const scrollTimeRef = React.useRef<NodeJS.Timeout>();
 
   React.useEffect(() => {
-    const sectionRef = sectionRouteRefArr[refIdx];
+    const sectionRef = sectionRouteRefArr[fullpageBaseProps.selectedIndex];
     window.location.hash = sectionRef.routerPath.substring(2);
-  }, [refIdx]);
+  }, [fullpageBaseProps.selectedIndex]);
 
   React.useEffect(() => {
     const idx = sectionRouteRefArr.findIndex((s) => s.routerPath == hashRoute);
     if (idx < 0) {
       console.error(window.location.hash + " Hash Link not found");
-      setRefIdx(0);
+      goToSectionByIndex(0);
     } else {
-      setRefIdx(idx);
+      goToSectionByIndex(idx);
     }
   }, [hashRoute]);
 
-  const onScrollMain = (event: React.UIEvent<HTMLDivElement, UIEvent>) => {
-    if (muteOnScrollRef.current) return;
-    const x = sectionRefs.reduce((p, c) => {
-      const c_diff = Math.abs(
-        directionSetterValue({
-          horizontalValue:
-            event.currentTarget.scrollLeft - c.current.offsetLeft,
-          verticalValue: event.currentTarget.scrollTop - c.current.offsetTop,
-          direction,
-        })
-      );
-      const p_diff = Math.abs(
-        directionSetterValue({
-          horizontalValue:
-            event.currentTarget.scrollLeft - p.current.offsetLeft,
-          verticalValue: event.currentTarget.scrollTop - p.current.offsetTop,
-          direction,
-        })
-      );
-      if (c_diff < p_diff) return c;
-      else return p;
-    });
-    if (autoScroll === false && disableSectionScroll === false) {
-      setDisableSectionScroll(true);
-    }
-
-    // For Scroll End
-    if (scrollTimeRef.current) clearTimeout(scrollTimeRef.current);
-    scrollTimeRef.current = setTimeout(() => {
-      scrollTimeRef.current = undefined;
-      if (disableSectionScroll) {
-        setDisableSectionScroll(false);
+  const onScrollMain = React.useCallback(
+    (event: React.UIEvent<HTMLDivElement, UIEvent>) => {
+      if (muteOnScrollRef.current) return;
+      const x = sectionRefs.current.reduce((p, c) => {
+        const c_diff = Math.abs(
+          directionSetterValue({
+            horizontalValue: event.currentTarget.scrollLeft - c.offsetLeft,
+            verticalValue: event.currentTarget.scrollTop - c.offsetTop,
+            direction,
+          })
+        );
+        const p_diff = Math.abs(
+          directionSetterValue({
+            horizontalValue: event.currentTarget.scrollLeft - p.offsetLeft,
+            verticalValue: event.currentTarget.scrollTop - p.offsetTop,
+            direction,
+          })
+        );
+        if (c_diff < p_diff) return c;
+        else return p;
+      });
+      if (autoScroll === false && disableSectionScroll === false) {
+        setDisableSectionScroll(true);
       }
-    }, 1000);
 
-    const index = sectionRefs.findIndex((s) => s == x);
-    setHashRoute(sectionRouteRefArr[index].routerPath);
-  };
+      const index = sectionRefs.current.findIndex((s) => s == x);
+      setHashRoute(sectionRouteRefArr[index].routerPath);
+    },
+    [sectionRefs.current]
+  );
 
   return (
     <FullpageBase
-      sectionRefArr={sectionRefArr.current}
-      selectedSection={sectionRefArr.current[refIdx]}
-      onLoadSectionRefs={setSectionRefs}
+      {...fullpageBaseProps}
+      direction={"horizontal"}
       onStartSectionScroll={() => {
         muteOnScrollRef.current = true;
         directionSetterValue({
@@ -114,13 +107,24 @@ export const FullpageHashRoute: React.FC<Props> = ({
           horizontalValue: () => (mainRef.current.style.overflowX = "scroll"),
           verticalValue: () => (mainRef.current.style.overflowY = "scroll"),
         })();
+        setDisableSectionScroll(false);
       }}
       onScroll={onScrollMain}
       disableSectionScroll={disableSectionScroll}
-      direction={direction}
       scrollDuration={scrollDuration ? scrollDuration : 2500}
       scrollEase={scrollEase ? scrollEase : inOutSine}
       ref={mainRef}
-    />
+    >
+      {sectionRouteRefArr.map((s, i) => (
+        <FullpageSection
+          ref={(r) => {
+            sectionRefs.current[i] = r;
+          }}
+          key={i}
+        >
+          {s.component}
+        </FullpageSection>
+      ))}
+    </FullpageBase>
   );
 };

@@ -20,15 +20,17 @@ const Catalogue: React.FC = () => {
   // const [sectionRefs, setSectionRefs] =
   //   React.useState<React.RefObject<HTMLElement>[]>();
   // const sectionRefs = getSectionRefs();
-  const section1 = React.useRef<HTMLElement>();
-  const section2 = React.useRef<HTMLElement>();
-  const section3 = React.useRef<HTMLElement>();
 
-  const sectionRefs = React.useMemo(
-    () => [section1, section2, section3],
-    [section1, section2, section3]
-  );
-  // const sectionRefs = React.useRef<HTMLElement[]>(Array(3));
+  // const section1 = React.useRef<HTMLElement>();
+  // const section2 = React.useRef<HTMLElement>();
+  // const section3 = React.useRef<HTMLElement>();
+
+  // const sectionRefs = React.useMemo(
+  //   () => [section1, section2, section3],
+  //   [section1, section2, section3]
+  // );
+
+  const sectionRefs = React.useRef<HTMLElement[]>(Array(3));
   const muteOnScrollRef = React.useRef(false);
   const fullpageRef = React.useRef<HTMLDivElement>();
   const router = useRouter();
@@ -45,23 +47,23 @@ const Catalogue: React.FC = () => {
     }
     lastScrollTop = e.currentTarget.scrollTop;
 
-    const x = sectionRefs.reduce((p, c) => {
+    const x = sectionRefs.current.reduce((p, c) => {
       const c_diff = Math.abs(
         e.currentTarget.scrollTop -
-          c.current.offsetTop +
+          c.offsetTop +
           limiter +
           fullpageRef.current.offsetTop
       );
       const p_diff = Math.abs(
         e.currentTarget.scrollTop -
-          p.current.offsetTop +
+          p.offsetTop +
           limiter +
           fullpageRef.current.offsetTop
       );
       if (c_diff < p_diff) return c;
       else return p;
     });
-    const index = sectionRefs.findIndex((s) => s === x);
+    const index = sectionRefs.current.findIndex((s) => s === x);
 
     if (getCurrentSectionIndex() != index) {
       goToSectionByIndex(index);
@@ -88,15 +90,14 @@ const Catalogue: React.FC = () => {
         direction={"vertical"}
         scrollDuration={1300}
         ref={fullpageRef}
-        maxOffset={1}
       >
-        <FullpageSection ref={section1}>
+        <FullpageSection ref={(r) => (sectionRefs.current[0] = r)}>
           <Cat1></Cat1>
         </FullpageSection>
-        <FullpageSection ref={section2}>
+        <FullpageSection ref={(r) => (sectionRefs.current[1] = r)}>
           <Cat2></Cat2>
         </FullpageSection>
-        <FullpageSection ref={section3}>
+        <FullpageSection ref={(r) => (sectionRefs.current[2] = r)}>
           <Cat3></Cat3>
         </FullpageSection>
       </FullpageBase>

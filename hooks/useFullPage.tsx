@@ -31,23 +31,28 @@ const scrollToSection = (params: {
 
   const position = offset + offsetAdjustment;
 
+  var timer = null;
   const scrollListener = (evt) => {
     if (typeof evt === "undefined") {
       return;
     }
-
-    const target = evt.currentTarget;
-    const targetScrollPosition = directionSetterValue({
-      horizontalValue: target.scrollLeft,
-      verticalValue: target.scrollTop,
-      direction: params.direction,
-    });
-
-    const offset = Math.abs(targetScrollPosition - position);
-    if (offset >= 0 && offset <= params.maxOffset) {
+    if (timer !== null) clearTimeout(timer);
+    timer = setTimeout(() => {
       params.onFinished?.();
-      target.removeEventListener("scroll", scrollListener);
-    }
+    }, 150);
+
+    // const target = evt.currentTarget;
+    // const targetScrollPosition = directionSetterValue({
+    //   horizontalValue: target.scrollLeft,
+    //   verticalValue: target.scrollTop,
+    //   direction: params.direction,
+    // });
+
+    // const offset = Math.abs(targetScrollPosition - position);
+    // if (offset >= 0 && offset <= params.maxOffset) {
+    //   params.onFinished?.();
+    //   target.removeEventListener("scroll", scrollListener);
+    // }
   };
 
   if (
@@ -112,10 +117,6 @@ const FullpageBase = React.forwardRef<
   const sectionRefs = React.useRef<HTMLElement[]>(
     Array(React.Children.toArray(params.children).length)
   );
-
-  React.useEffect(() => {
-    console.log("OH NO");
-  }, []);
 
   React.useEffect(() => {
     ref.current = mainRef.current;
