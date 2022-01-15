@@ -1,6 +1,6 @@
 import { dir } from "console";
 import React from "react";
-import { DirectionType, directionSetterValue } from "../direction-utils";
+import { OrientationType, orientationSetterValue } from "../direction-utils";
 import styles from "./fullpage-base.module.scss";
 import Scroll from "scroll";
 import { inOutSine } from "../ease-utils";
@@ -19,7 +19,7 @@ type Props = {
   disableSectionScroll?: boolean;
   scrollDuration?: number;
   scrollEase?: (time: number) => number;
-  direction: DirectionType;
+  direction: OrientationType;
   maxOffset?: number;
 };
 
@@ -52,7 +52,7 @@ export const FullpageBase = React.forwardRef<HTMLDivElement, Props>(
         return;
       }
 
-      const offsetAdjustment = directionSetterValue({
+      const offsetAdjustment = orientationSetterValue({
         horizontalValue: -sectionRefs[0].current.offsetLeft,
         verticalValue: -sectionRefs[0].current.offsetTop,
         direction: params.direction,
@@ -113,7 +113,7 @@ const scrollToSection = (params: {
     ? params.offsetAdjustment
     : 0;
 
-  const offset = directionSetterValue({
+  const offset = orientationSetterValue({
     horizontalValue: params.destinationRef.current.offsetLeft,
     verticalValue: params.destinationRef.current.offsetTop,
     direction: params.direction,
@@ -127,7 +127,7 @@ const scrollToSection = (params: {
     }
 
     const target = evt.currentTarget;
-    const targetScrollPosition = directionSetterValue({
+    const targetScrollPosition = orientationSetterValue({
       horizontalValue: target.scrollLeft,
       verticalValue: target.scrollTop,
       direction: params.direction,
@@ -141,7 +141,7 @@ const scrollToSection = (params: {
   };
 
   if (
-    directionSetterValue({
+    orientationSetterValue({
       horizontalValue:
         params.scrolledRefEl && params.scrolledRefEl.scrollLeft !== position,
       verticalValue:
@@ -154,7 +154,7 @@ const scrollToSection = (params: {
 
   params.scrolledRefEl.addEventListener("scroll", scrollListener);
 
-  directionSetterValue({
+  orientationSetterValue({
     direction: params.direction,
     horizontalValue: Scroll.left(params.scrolledRefEl, position, {
       duration: params.scrollDuration,

@@ -1,8 +1,8 @@
 import React from "react";
 import styles from "../components/fullpages/fullpage-base-experimental/fullpage-base-experimental.module.scss";
 import {
-  directionSetterValue,
-  DirectionType,
+  orientationSetterValue,
+  OrientationType,
 } from "../components/fullpages/direction-utils";
 import { inOutSine } from "../components/fullpages/ease-utils";
 import Scroll from "scroll";
@@ -16,17 +16,17 @@ const scrollToSection = (params: {
   offsetAdjustment?: number;
   scrollDuration: number;
   scrollEase: (time: number) => number;
-  direction: "horizontal" | "vertical";
+  orientation: "horizontal" | "vertical";
   maxOffset: number;
 }) => {
   const offsetAdjustment = params.offsetAdjustment
     ? params.offsetAdjustment
     : 0;
 
-  const offset = directionSetterValue({
+  const offset = orientationSetterValue({
     horizontalValue: params.destinationRef.offsetLeft,
     verticalValue: params.destinationRef.offsetTop,
-    direction: params.direction,
+    orientation: params.orientation,
   })!;
 
   const position = offset + offsetAdjustment;
@@ -56,12 +56,12 @@ const scrollToSection = (params: {
   };
 
   if (
-    directionSetterValue({
+    orientationSetterValue({
       horizontalValue:
         params.scrolledRefEl && params.scrolledRefEl.scrollLeft !== position,
       verticalValue:
         params.scrolledRefEl && params.scrolledRefEl.scrollTop !== position,
-      direction: params.direction,
+      orientation: params.orientation,
     })
   ) {
     params.onStart?.();
@@ -69,8 +69,8 @@ const scrollToSection = (params: {
 
   params.scrolledRefEl.addEventListener("scroll", scrollListener);
 
-  directionSetterValue({
-    direction: params.direction,
+  orientationSetterValue({
+    orientation: params.orientation,
     horizontalValue: Scroll.left(params.scrolledRefEl, position, {
       duration: params.scrollDuration,
       ease: params.scrollEase,
@@ -104,7 +104,7 @@ export type OnScrollFullpage = (o: {
 }) => void;
 
 type PropsFullpageBase = {
-  direction: DirectionType;
+  orientation: OrientationType;
   selectedIndex?: number;
   disableSectionScroll?: boolean;
   scrollDuration?: number;
@@ -145,10 +145,10 @@ const FullpageBase = React.forwardRef<
     }
 
     if (!sectionRefs.current[0]) return;
-    const offsetAdjustment = directionSetterValue({
+    const offsetAdjustment = orientationSetterValue({
       horizontalValue: -sectionRefs.current[0].offsetLeft,
       verticalValue: -sectionRefs.current[0].offsetTop,
-      direction: params.direction,
+      orientation: params.orientation,
     });
 
     scrollToSection({
@@ -157,7 +157,7 @@ const FullpageBase = React.forwardRef<
       onFinished: params.onFinishedSectionScroll,
       onStart: params.onStartSectionScroll,
       offsetAdjustment,
-      direction: params.direction,
+      orientation: params.orientation,
       scrollDuration: params.scrollDuration ?? 2500,
       scrollEase: params.scrollEase ?? inOutSine,
       maxOffset: params.maxOffset ?? 0,
@@ -169,12 +169,12 @@ const FullpageBase = React.forwardRef<
       className={[
         styles.Main,
         "fullpage-base-container",
-        styles[params.direction],
+        styles[params.orientation],
       ].join(" ")}
       ref={mainRef}
       onScroll={(e) => {
-        const scrollDirection = directionSetterValue({
-          direction: params.direction,
+        const scrollDirection = orientationSetterValue({
+          orientation: params.orientation,
           horizontalValue:
             e.currentTarget.scrollLeft - lastScrollLeft > 0 ? "right" : "left",
           verticalValue:
@@ -218,7 +218,7 @@ export const useFullPage = () => {
   );
 
   const fullpageBaseProps: PropsFullpageBase = {
-    direction: "horizontal",
+    orientation: "horizontal",
     selectedIndex: selectedSectionIndex,
   };
 

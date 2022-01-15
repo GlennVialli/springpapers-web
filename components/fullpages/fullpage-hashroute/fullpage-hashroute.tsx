@@ -1,7 +1,7 @@
 import React from "react";
 import { useFullPage, OnScrollFullpage } from "../../../hooks/useFullPage";
 import { useHashRoute } from "../../../hooks/useHashRoute";
-import { DirectionType, directionSetterValue } from "../direction-utils";
+import { OrientationType, orientationSetterValue } from "../direction-utils";
 import { inOutSine } from "../ease-utils";
 import { FullpageBase, FullpageBaseRef } from "../fullpage-base/fullpage-base";
 
@@ -14,7 +14,7 @@ type FullpageRouterSectionRef = FullpageBaseRef & {
 type Props = {
   sectionRouteRefArr: FullpageRouterSectionRef[];
   autoScroll: boolean;
-  direction: DirectionType;
+  orientation: OrientationType;
   scrollDuration?: number;
   scrollEase?: (time: number) => number;
 };
@@ -22,7 +22,7 @@ type Props = {
 export const FullpageHashRoute: React.FC<Props> = ({
   sectionRouteRefArr,
   autoScroll,
-  direction,
+  orientation,
   scrollDuration,
   scrollEase,
 }) => {
@@ -63,17 +63,17 @@ export const FullpageHashRoute: React.FC<Props> = ({
       if (muteOnScrollRef.current) return;
       const x = sectionRefs.current.reduce((p, c) => {
         const c_diff = Math.abs(
-          directionSetterValue({
+          orientationSetterValue({
             horizontalValue: event.currentTarget.scrollLeft - c.offsetLeft,
             verticalValue: event.currentTarget.scrollTop - c.offsetTop,
-            direction,
+            orientation,
           })
         );
         const p_diff = Math.abs(
-          directionSetterValue({
+          orientationSetterValue({
             horizontalValue: event.currentTarget.scrollLeft - p.offsetLeft,
             verticalValue: event.currentTarget.scrollTop - p.offsetTop,
-            direction,
+            orientation,
           })
         );
         if (c_diff < p_diff) return c;
@@ -93,19 +93,19 @@ export const FullpageHashRoute: React.FC<Props> = ({
   return (
     <FullpageBase
       {...fullpageBaseProps}
-      direction={direction}
+      orientation={orientation}
       onStartSectionScroll={() => {
         muteOnScrollRef.current = true;
-        directionSetterValue({
-          direction,
+        orientationSetterValue({
+          orientation,
           horizontalValue: () => (mainRef.current.style.overflowX = "hidden"),
           verticalValue: () => (mainRef.current.style.overflowY = "hidden"),
         })();
       }}
       onFinishedSectionScroll={() => {
         muteOnScrollRef.current = false;
-        directionSetterValue({
-          direction,
+        orientationSetterValue({
+          orientation,
           horizontalValue: () => (mainRef.current.style.overflowX = "scroll"),
           verticalValue: () => (mainRef.current.style.overflowY = "scroll"),
         })();

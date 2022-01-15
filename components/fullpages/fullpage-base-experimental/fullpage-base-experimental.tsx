@@ -1,9 +1,9 @@
 import React from "react";
-import { DirectionType } from "../direction-utils";
+import { OrientationType } from "../direction-utils";
 import styles from "./fullpage-base-experimental.module.scss";
 
 type Props = {
-  direction: DirectionType;
+  direction: OrientationType;
 };
 
 export const FullpageBaseExperimental = React.forwardRef<
