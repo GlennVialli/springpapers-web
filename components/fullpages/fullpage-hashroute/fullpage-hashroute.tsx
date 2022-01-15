@@ -83,7 +83,8 @@ export const FullpageHashRoute: React.FC<Props> = ({
       }
 
       const index = sectionRefs.current.findIndex((s) => s == x);
-      setHashRoute(sectionRouteRefArr[index].routerPath);
+      if (sectionRouteRefArr[index]?.routerPath)
+        setHashRoute(sectionRouteRefArr[index].routerPath);
     },
     [sectionRefs.current]
   );
