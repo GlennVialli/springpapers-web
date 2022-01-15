@@ -75,9 +75,9 @@ const Catalogue: React.FC = () => {
       <h1>Catalogue</h1>
       <FullpageBase
         {...fullpageBaseProps}
-        onScroll={(e) => {
+        onScrollFullpage={(o) => {
           if (muteOnScrollRef.current) return;
-          onScroll(e);
+          onScroll(o.event);
         }}
         onStartSectionScroll={() => {
           muteOnScrollRef.current = true;

@@ -1,5 +1,5 @@
 import React from "react";
-import { useFullPage } from "../../../hooks/useFullPage";
+import { useFullPage, OnScrollFullpage } from "../../../hooks/useFullPage";
 import { useHashRoute } from "../../../hooks/useHashRoute";
 import { DirectionType, directionSetterValue } from "../direction-utils";
 import { inOutSine } from "../ease-utils";
@@ -57,8 +57,9 @@ export const FullpageHashRoute: React.FC<Props> = ({
     }
   }, [hashRoute]);
 
-  const onScrollMain = React.useCallback(
-    (event: React.UIEvent<HTMLDivElement, UIEvent>) => {
+  const onScrollMain = React.useCallback<OnScrollFullpage>(
+    (o) => {
+      const { event, scrollDirection } = o;
       if (muteOnScrollRef.current) return;
       const x = sectionRefs.current.reduce((p, c) => {
         const c_diff = Math.abs(
@@ -92,7 +93,7 @@ export const FullpageHashRoute: React.FC<Props> = ({
   return (
     <FullpageBase
       {...fullpageBaseProps}
-      direction={"horizontal"}
+      direction={direction}
       onStartSectionScroll={() => {
         muteOnScrollRef.current = true;
         directionSetterValue({
@@ -110,7 +111,7 @@ export const FullpageHashRoute: React.FC<Props> = ({
         })();
         setDisableSectionScroll(false);
       }}
-      onScroll={onScrollMain}
+      onScrollFullpage={onScrollMain}
       disableSectionScroll={disableSectionScroll}
       scrollDuration={scrollDuration ? scrollDuration : 2500}
       scrollEase={scrollEase ? scrollEase : inOutSine}

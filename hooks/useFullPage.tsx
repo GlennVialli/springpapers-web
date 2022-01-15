@@ -97,6 +97,12 @@ const FullpageSection = React.forwardRef<
   );
 });
 
+type ScrollPageDirection = "right" | "left" | "up" | "down";
+export type OnScrollFullpage = (o: {
+  event: React.UIEvent<HTMLDivElement, UIEvent>;
+  scrollDirection: ScrollPageDirection;
+}) => void;
+
 type PropsFullpageBase = {
   direction: DirectionType;
   selectedIndex?: number;
@@ -104,7 +110,7 @@ type PropsFullpageBase = {
   scrollDuration?: number;
   maxOffset?: number;
   scrollEase?: (time: number) => number;
-  onScroll?: (event: React.UIEvent<HTMLDivElement, UIEvent>) => void;
+  onScrollFullpage?: OnScrollFullpage;
   onStartSectionScroll?: () => void;
   onFinishedSectionScroll?: () => void;
 };
@@ -117,9 +123,13 @@ const FullpageBase = React.forwardRef<
   const sectionRefs = React.useRef<HTMLElement[]>(
     Array(React.Children.toArray(params.children).length)
   );
+  let lastScrollLeft = React.useRef(0).current;
+  let lastScrollTop = React.useRef(0).current;
 
   React.useEffect(() => {
     ref.current = mainRef.current;
+    lastScrollLeft = mainRef.current.scrollLeft;
+    lastScrollTop = mainRef.current.scrollTop;
   }, [mainRef, mainRef.current]);
 
   React.useEffect(() => {
@@ -163,7 +173,16 @@ const FullpageBase = React.forwardRef<
       ].join(" ")}
       ref={mainRef}
       onScroll={(e) => {
-        params.onScroll?.(e);
+        const scrollDirection = directionSetterValue({
+          direction: params.direction,
+          horizontalValue:
+            e.currentTarget.scrollLeft - lastScrollLeft > 0 ? "right" : "left",
+          verticalValue:
+            e.currentTarget.scrollTop - lastScrollTop > 0 ? "down" : "up",
+        }) as ScrollPageDirection;
+        lastScrollTop = e.currentTarget.scrollTop;
+        lastScrollLeft = e.currentTarget.scrollLeft;
+        params.onScrollFullpage?.({ event: e, scrollDirection });
       }}
     >
       {React.Children.toArray(params.children).map((s, index) => {
