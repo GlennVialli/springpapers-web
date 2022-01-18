@@ -61,33 +61,84 @@ export const FullpageHashRoute: React.FC<Props> = ({
     (o) => {
       const { event, scrollDirection } = o;
       if (muteOnScrollRef.current) return;
-      const x = sectionRefs.current.reduce((p, c) => {
-        const c_diff = Math.abs(
-          orientationSetterValue({
-            horizontalValue: event.currentTarget.scrollLeft - c.offsetLeft,
-            verticalValue: event.currentTarget.scrollTop - c.offsetTop,
-            orientation,
-          })
-        );
-        const p_diff = Math.abs(
-          orientationSetterValue({
-            horizontalValue: event.currentTarget.scrollLeft - p.offsetLeft,
-            verticalValue: event.currentTarget.scrollTop - p.offsetTop,
-            orientation,
-          })
-        );
-        if (c_diff < p_diff) return c;
-        else return p;
-      });
+
       if (autoScroll === false && disableSectionScroll === false) {
         setDisableSectionScroll(true);
       }
+      const currentIndex = getCurrentSectionIndex();
+      const index =
+        currentIndex +
+        (() => {
+          if (scrollDirection === "right" || scrollDirection === "down")
+            return 1;
+          if (scrollDirection === "left" || scrollDirection === "up") return -1;
+        })();
+      const nextSection = sectionRefs.current[index];
+      if (!nextSection) return;
 
-      const index = sectionRefs.current.findIndex((s) => s == x);
+      const percentageView = (() => {
+        const percent = 50;
+        if (scrollDirection === "right" || scrollDirection === "left")
+          return (nextSection.offsetWidth * percent) / 100;
+        if (scrollDirection === "up" || scrollDirection === "down")
+          return (nextSection.offsetHeight * percent) / 100;
+      })();
+      let go = false;
+
+      if (
+        scrollDirection === "right" &&
+        Math.abs(
+          event.currentTarget.scrollLeft -
+            nextSection.offsetLeft +
+            nextSection.offsetWidth
+        ) > percentageView
+      ) {
+        go = true;
+      }
+
+      if (
+        scrollDirection === "left" &&
+        Math.abs(
+          event.currentTarget.scrollLeft -
+            nextSection.offsetLeft -
+            nextSection.offsetWidth
+        ) > percentageView
+      ) {
+        go = true;
+      }
+
+      if (
+        scrollDirection === "down" &&
+        Math.abs(
+          event.currentTarget.scrollTop -
+            nextSection.offsetTop +
+            nextSection.offsetHeight
+        ) > percentageView
+      ) {
+        go = true;
+      }
+
+      if (
+        scrollDirection === "up" &&
+        Math.abs(
+          event.currentTarget.scrollTop -
+            nextSection.offsetTop -
+            nextSection.offsetHeight
+        ) > percentageView
+      ) {
+        go = true;
+      }
+
+      if (!go) return;
       if (sectionRouteRefArr[index]?.routerPath)
         setHashRoute(sectionRouteRefArr[index].routerPath);
     },
-    [sectionRefs.current]
+    [
+      sectionRefs.current,
+      getCurrentSectionIndex,
+      autoScroll,
+      disableSectionScroll,
+    ]
   );
 
   return (

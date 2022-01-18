@@ -48,7 +48,7 @@ export default function Index() {
     <Layout routers={routers}>
       <FullpageHashRoute
         autoScroll={true}
-        direction={"horizontal"}
+        orientation={"horizontal"}
         sectionRouteRefArr={sectionRefArr.map((s) => ({
           routerPath: s.routerLayout.routerPath,
           ...s,
