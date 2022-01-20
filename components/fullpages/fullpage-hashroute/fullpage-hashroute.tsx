@@ -1,5 +1,9 @@
 import React from "react";
-import { useFullPage, OnScrollFullpage } from "../../../hooks/useFullPage";
+import {
+  useFullPage,
+  OnScrollFullpage,
+} from "../../../hooks/fullpage_hooks/useFullPage";
+import { useOnScrollFullpageWhenPercentView } from "../../../hooks/fullpage_hooks/useOnScrollFullpageWhenPercentView";
 import { useHashRoute } from "../../../hooks/useHashRoute";
 import { OrientationType, orientationSetterValue } from "../direction-utils";
 import { inOutSine } from "../ease-utils";
@@ -26,21 +30,23 @@ export const FullpageHashRoute: React.FC<Props> = ({
   scrollDuration,
   scrollEase,
 }) => {
+  const FullPageHook = useFullPage();
   const {
     FullpageBase,
     FullpageSection,
     fullpageBaseProps,
     getCurrentSectionIndex,
     goToSectionByIndex,
-  } = useFullPage();
+    setDisableSectionScroll,
+  } = FullPageHook;
+  const onScrollFullpageWhenPercentView =
+    useOnScrollFullpageWhenPercentView(FullPageHook);
   const [hashRoute, setHashRoute] = useHashRoute();
   const muteOnScrollRef = React.useRef<boolean>(false);
   const mainRef = React.useRef<HTMLDivElement>();
   const sectionRefs = React.useRef<HTMLElement[]>(
     Array(sectionRouteRefArr.length)
   );
-
-  const [disableSectionScroll, setDisableSectionScroll] = React.useState(false);
 
   React.useEffect(() => {
     const sectionRef = sectionRouteRefArr[fullpageBaseProps.selectedIndex];
@@ -58,86 +64,12 @@ export const FullpageHashRoute: React.FC<Props> = ({
   }, [hashRoute]);
 
   const onScrollMain = React.useCallback<OnScrollFullpage>(
-    (o) => {
-      const { event, scrollDirection } = o;
-      if (muteOnScrollRef.current) return;
-
-      if (autoScroll === false && disableSectionScroll === false) {
-        setDisableSectionScroll(true);
-      }
-      const currentIndex = getCurrentSectionIndex();
-      const index =
-        currentIndex +
-        (() => {
-          if (scrollDirection === "right" || scrollDirection === "down")
-            return 1;
-          if (scrollDirection === "left" || scrollDirection === "up") return -1;
-        })();
-      const nextSection = sectionRefs.current[index];
-      if (!nextSection) return;
-
-      const percentageView = (() => {
-        const percent = 50;
-        if (scrollDirection === "right" || scrollDirection === "left")
-          return (nextSection.offsetWidth * percent) / 100;
-        if (scrollDirection === "up" || scrollDirection === "down")
-          return (nextSection.offsetHeight * percent) / 100;
-      })();
-      let go = false;
-
-      if (
-        scrollDirection === "right" &&
-        Math.abs(
-          event.currentTarget.scrollLeft -
-            nextSection.offsetLeft +
-            nextSection.offsetWidth
-        ) > percentageView
-      ) {
-        go = true;
-      }
-
-      if (
-        scrollDirection === "left" &&
-        Math.abs(
-          event.currentTarget.scrollLeft -
-            nextSection.offsetLeft -
-            nextSection.offsetWidth
-        ) > percentageView
-      ) {
-        go = true;
-      }
-
-      if (
-        scrollDirection === "down" &&
-        Math.abs(
-          event.currentTarget.scrollTop -
-            nextSection.offsetTop +
-            nextSection.offsetHeight
-        ) > percentageView
-      ) {
-        go = true;
-      }
-
-      if (
-        scrollDirection === "up" &&
-        Math.abs(
-          event.currentTarget.scrollTop -
-            nextSection.offsetTop -
-            nextSection.offsetHeight
-        ) > percentageView
-      ) {
-        go = true;
-      }
-
-      if (!go) return;
-      if (sectionRouteRefArr[index]?.routerPath)
-        setHashRoute(sectionRouteRefArr[index].routerPath);
-    },
+    (o) => {},
     [
       sectionRefs.current,
       getCurrentSectionIndex,
       autoScroll,
-      disableSectionScroll,
+      fullpageBaseProps.disableSectionScroll,
     ]
   );
 
@@ -162,8 +94,16 @@ export const FullpageHashRoute: React.FC<Props> = ({
         })();
         setDisableSectionScroll(false);
       }}
-      onScrollFullpage={onScrollMain}
-      disableSectionScroll={disableSectionScroll}
+      onScrollFullpage={(o) => {
+        if (muteOnScrollRef.current) return;
+        if (
+          autoScroll === false &&
+          fullpageBaseProps.disableSectionScroll === false
+        ) {
+          setDisableSectionScroll(true);
+        }
+        onScrollFullpageWhenPercentView(o);
+      }}
       scrollDuration={scrollDuration ? scrollDuration : 2500}
       scrollEase={scrollEase ? scrollEase : inOutSine}
       ref={mainRef}

@@ -1,10 +1,10 @@
 import React from "react";
-import styles from "../components/fullpages/fullpage-base-experimental/fullpage-base-experimental.module.scss";
+import styles from "../../components/fullpages/fullpage-base-experimental/fullpage-base-experimental.module.scss";
 import {
   orientationSetterValue,
   OrientationType,
-} from "../components/fullpages/direction-utils";
-import { inOutSine } from "../components/fullpages/ease-utils";
+} from "../../components/fullpages/direction-utils";
+import { inOutSine } from "../../components/fullpages/ease-utils";
 import Scroll from "scroll";
 
 // EXTRA FUNCTIONS
@@ -113,6 +113,7 @@ type PropsFullpageBase = {
   onScrollFullpage?: OnScrollFullpage;
   onStartSectionScroll?: () => void;
   onFinishedSectionScroll?: () => void;
+  onLoadSectionRefs: (refs: React.MutableRefObject<HTMLElement[]>) => void;
 };
 
 const FullpageBase = React.forwardRef<
@@ -131,6 +132,10 @@ const FullpageBase = React.forwardRef<
     lastScrollLeft = mainRef.current.scrollLeft;
     lastScrollTop = mainRef.current.scrollTop;
   }, [mainRef, mainRef.current]);
+
+  React.useEffect(() => {
+    params.onLoadSectionRefs(sectionRefs);
+  }, [sectionRefs, sectionRefs.current]);
 
   React.useEffect(() => {
     const idx = params.selectedIndex ?? 0;
@@ -184,6 +189,7 @@ const FullpageBase = React.forwardRef<
         lastScrollLeft = e.currentTarget.scrollLeft;
         params.onScrollFullpage?.({ event: e, scrollDirection });
       }}
+      {...params}
     >
       {React.Children.toArray(params.children).map((s, index) => {
         const childEl = React.Children.only(s);
@@ -205,6 +211,11 @@ export const useFullPage = () => {
   const [selectedSectionIndex, setSelectedSectionIndex] =
     React.useState<number>(0);
 
+  const [sectionRefs, setSectionRefs] =
+    React.useState<React.MutableRefObject<HTMLElement[]>>();
+
+  const [disableSectionScroll, setDisableSectionScroll] = React.useState(false);
+
   const goToSectionByIndex = React.useCallback(
     (index: number) => {
       console.log(index);
@@ -217,9 +228,13 @@ export const useFullPage = () => {
     [selectedSectionIndex]
   );
 
+  const getSectionRefs = React.useCallback(() => sectionRefs, [sectionRefs]);
+
   const fullpageBaseProps: PropsFullpageBase = {
     orientation: "horizontal",
     selectedIndex: selectedSectionIndex,
+    onLoadSectionRefs: setSectionRefs,
+    disableSectionScroll,
   };
 
   return {
@@ -228,5 +243,7 @@ export const useFullPage = () => {
     fullpageBaseProps,
     goToSectionByIndex,
     getCurrentSectionIndex,
+    getSectionRefs,
+    setDisableSectionScroll,
   };
 };

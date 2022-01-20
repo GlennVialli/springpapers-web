@@ -5,18 +5,18 @@ import { Cat2 } from "../components/catalogue-components/cat2";
 import { Cat3 } from "../components/catalogue-components/cat3";
 import styles from "../components/catalogue-components/catalogue.module.scss";
 import { If } from "../components/If";
-import { useFullPage } from "../hooks/useFullPage";
-
-var lastScrollTop = 0;
+import { useFullPage } from "../hooks/fullpage_hooks/useFullPage";
+import { useOnScrollFullpageWhenPercentView } from "../hooks/fullpage_hooks/useOnScrollFullpageWhenPercentView";
 
 const Catalogue: React.FC = () => {
+  const Fullpage = useFullPage();
   const {
     FullpageBase,
     FullpageSection,
     fullpageBaseProps,
     goToSectionByIndex,
     getCurrentSectionIndex,
-  } = useFullPage();
+  } = Fullpage;
   // const [sectionRefs, setSectionRefs] =
   //   React.useState<React.RefObject<HTMLElement>[]>();
   // const sectionRefs = getSectionRefs();
@@ -34,41 +34,8 @@ const Catalogue: React.FC = () => {
   const muteOnScrollRef = React.useRef(false);
   const fullpageRef = React.useRef<HTMLDivElement>();
   const router = useRouter();
-
-  // console.log(sectionRefs.current);
-  const onScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
-    let limiter = 0;
-    if (e.currentTarget.scrollTop > lastScrollTop) {
-      // downscroll
-      limiter = 350;
-    } else {
-      // upscroll
-      limiter = -350;
-    }
-    lastScrollTop = e.currentTarget.scrollTop;
-
-    const x = sectionRefs.current.reduce((p, c) => {
-      const c_diff = Math.abs(
-        e.currentTarget.scrollTop -
-          c.offsetTop +
-          limiter +
-          fullpageRef.current.offsetTop
-      );
-      const p_diff = Math.abs(
-        e.currentTarget.scrollTop -
-          p.offsetTop +
-          limiter +
-          fullpageRef.current.offsetTop
-      );
-      if (c_diff < p_diff) return c;
-      else return p;
-    });
-    const index = sectionRefs.current.findIndex((s) => s === x);
-
-    if (getCurrentSectionIndex() != index) {
-      goToSectionByIndex(index);
-    }
-  };
+  const onScrollFullpagePercentView =
+    useOnScrollFullpageWhenPercentView(Fullpage);
 
   return (
     <div className={[styles.container, "catalogue-container"].join(" ")}>
@@ -77,7 +44,7 @@ const Catalogue: React.FC = () => {
         {...fullpageBaseProps}
         onScrollFullpage={(o) => {
           if (muteOnScrollRef.current) return;
-          onScroll(o.event);
+          onScrollFullpagePercentView(o, 20);
         }}
         onStartSectionScroll={() => {
           muteOnScrollRef.current = true;
