@@ -1,6 +1,6 @@
 import React from "react";
-import { FullpageBaseExperimental } from "../components/fullpages/fullpage-base-experimental/fullpage-base-experimental";
 import Layout from "../components/layout";
+import { useFullPage } from "../hooks/fullpage_hooks/useFullPage";
 
 // const About: React.FC = () => {
 //   return (
@@ -11,10 +11,11 @@ import Layout from "../components/layout";
 // };
 
 const About: React.FC = () => {
+  const { FullpageBase, fullpageBaseProps } = useFullPage();
   return (
     <>
       <h3>About</h3>
-      <FullpageBaseExperimental direction={"vertical"}>
+      <FullpageBase {...fullpageBaseProps} orientation={"vertical"}>
         <div>
           <h3>HALLO</h3>
         </div>
@@ -24,7 +25,7 @@ const About: React.FC = () => {
         <div>
           <h3>HALLU</h3>
         </div>
-      </FullpageBaseExperimental>
+      </FullpageBase>
     </>
   );
 };

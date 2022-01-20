@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "../../components/fullpages/fullpage-base-experimental/fullpage-base-experimental.module.scss";
+import styles from "./fullpageBase.module.scss";
 import {
   orientationSetterValue,
   OrientationType,
@@ -128,7 +128,9 @@ const FullpageBase = React.forwardRef<
   let lastScrollTop = React.useRef(0).current;
 
   React.useEffect(() => {
-    ref.current = mainRef.current;
+    if (ref) {
+      ref.current = mainRef.current;
+    }
     lastScrollLeft = mainRef.current.scrollLeft;
     lastScrollTop = mainRef.current.scrollTop;
   }, [mainRef, mainRef.current]);
