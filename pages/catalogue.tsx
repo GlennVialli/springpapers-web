@@ -46,17 +46,15 @@ const Catalogue: React.FC = () => {
           <Cat3></Cat3>
         </FullpageSection>
       </FullpageBase>
-      <If condition={router.asPath == "/#catalogue"}>
-        <button
-          className={styles.nextButton}
-          onClick={() => {
-            const nextIdx = getCurrentSectionIndex() + 1;
-            goToSectionByIndex(nextIdx);
-          }}
-        >
-          NEXT
-        </button>
-      </If>
+      <button
+        className={styles.nextButton}
+        onClick={() => {
+          const nextIdx = getCurrentSectionIndex() + 1;
+          goToSectionByIndex(nextIdx);
+        }}
+      >
+        NEXT
+      </button>
     </div>
   );
 };
