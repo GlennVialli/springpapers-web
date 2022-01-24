@@ -59,15 +59,19 @@ const scrollToSection = (params: {
 
   orientationSetterValue({
     orientation: params.orientation,
-    horizontalValue: Scroll.left(params.scrolledRefEl, position, {
-      duration: params.scrollDuration,
-      ease: params.scrollEase,
-    }),
-    verticalValue: Scroll.top(params.scrolledRefEl, position, {
-      duration: params.scrollDuration,
-      ease: params.scrollEase,
-    }),
-  });
+    horizontalValue: () => {
+      return Scroll.left(params.scrolledRefEl, position, {
+        duration: params.scrollDuration,
+        ease: params.scrollEase,
+      });
+    },
+    verticalValue: () => {
+      return Scroll.top(params.scrolledRefEl, position, {
+        duration: params.scrollDuration,
+        ease: params.scrollEase,
+      });
+    },
+  })();
 };
 
 interface PropsFullpageSection {}
