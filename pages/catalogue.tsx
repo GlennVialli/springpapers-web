@@ -17,18 +17,6 @@ const Catalogue: React.FC = () => {
     goToSectionByIndex,
     getCurrentSectionIndex,
   } = Fullpage;
-  // const [sectionRefs, setSectionRefs] =
-  //   React.useState<React.RefObject<HTMLElement>[]>();
-  // const sectionRefs = getSectionRefs();
-
-  // const section1 = React.useRef<HTMLElement>();
-  // const section2 = React.useRef<HTMLElement>();
-  // const section3 = React.useRef<HTMLElement>();
-
-  // const sectionRefs = React.useMemo(
-  //   () => [section1, section2, section3],
-  //   [section1, section2, section3]
-  // );
 
   const sectionRefs = React.useRef<HTMLElement[]>(Array(3));
   const fullpageRef = React.useRef<HTMLDivElement>();
