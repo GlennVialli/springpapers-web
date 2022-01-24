@@ -125,6 +125,7 @@ const FullpageBase = React.forwardRef<
   const sectionRefs = React.useRef<HTMLElement[]>(
     Array(React.Children.toArray(params.children).length)
   );
+  const muteOnScrollRef = React.useRef<boolean>(false);
   let lastScrollLeft = React.useRef(0).current;
   let lastScrollTop = React.useRef(0).current;
 
@@ -162,8 +163,24 @@ const FullpageBase = React.forwardRef<
     scrollToSection({
       destinationRef: sectionRefs.current[idx],
       scrolledRefEl: mainRef.current,
-      onFinished: params.onFinishedSectionScroll,
-      onStart: params.onStartSectionScroll,
+      onFinished: () => {
+        muteOnScrollRef.current = false;
+        orientationSetterValue({
+          orientation: params.orientation,
+          horizontalValue: () => (mainRef.current.style.overflowX = "scroll"),
+          verticalValue: () => (mainRef.current.style.overflowY = "scroll"),
+        })();
+        params.onFinishedSectionScroll?.();
+      },
+      onStart: () => {
+        muteOnScrollRef.current = true;
+        orientationSetterValue({
+          orientation: params.orientation,
+          horizontalValue: () => (mainRef.current.style.overflowX = "hidden"),
+          verticalValue: () => (mainRef.current.style.overflowY = "hidden"),
+        })();
+        params.onStartSectionScroll?.();
+      },
       offsetAdjustment,
       orientation: params.orientation,
       scrollDuration: params.scrollDuration ?? 2500,
@@ -181,6 +198,7 @@ const FullpageBase = React.forwardRef<
       ].join(" ")}
       ref={mainRef}
       onScroll={(e) => {
+        if (muteOnScrollRef.current) return;
         const scrollDirection = orientationSetterValue({
           orientation: params.orientation,
           horizontalValue:

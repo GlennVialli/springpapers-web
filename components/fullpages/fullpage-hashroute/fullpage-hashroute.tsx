@@ -39,7 +39,6 @@ export const FullpageHashRoute: React.FC<Props> = ({
   const onScrollFullpageWhenPercentView =
     useOnScrollFullpageWhenPercentView(FullPageHook);
   const [hashRoute, setHashRoute] = useHashRoute();
-  const muteOnScrollRef = React.useRef<boolean>(false);
   const mainRef = React.useRef<HTMLDivElement>();
   const sectionRefs = React.useRef<HTMLElement[]>(
     Array(sectionRouteRefArr.length)
@@ -64,25 +63,11 @@ export const FullpageHashRoute: React.FC<Props> = ({
     <FullpageBase
       {...fullpageBaseProps}
       orientation={orientation}
-      onStartSectionScroll={() => {
-        muteOnScrollRef.current = true;
-        orientationSetterValue({
-          orientation,
-          horizontalValue: () => (mainRef.current.style.overflowX = "hidden"),
-          verticalValue: () => (mainRef.current.style.overflowY = "hidden"),
-        })();
-      }}
+      onStartSectionScroll={() => {}}
       onFinishedSectionScroll={() => {
-        muteOnScrollRef.current = false;
-        orientationSetterValue({
-          orientation,
-          horizontalValue: () => (mainRef.current.style.overflowX = "scroll"),
-          verticalValue: () => (mainRef.current.style.overflowY = "scroll"),
-        })();
         setDisableSectionScroll(false);
       }}
       onScrollFullpage={(o) => {
-        if (muteOnScrollRef.current) return;
         if (
           autoScroll === false &&
           fullpageBaseProps.disableSectionScroll === false

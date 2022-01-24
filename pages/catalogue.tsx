@@ -31,7 +31,6 @@ const Catalogue: React.FC = () => {
   // );
 
   const sectionRefs = React.useRef<HTMLElement[]>(Array(3));
-  const muteOnScrollRef = React.useRef(false);
   const fullpageRef = React.useRef<HTMLDivElement>();
   const router = useRouter();
   const onScrollFullpagePercentView =
@@ -43,16 +42,7 @@ const Catalogue: React.FC = () => {
       <FullpageBase
         {...fullpageBaseProps}
         onScrollFullpage={(o) => {
-          if (muteOnScrollRef.current) return;
           onScrollFullpagePercentView(o, 20);
-        }}
-        onStartSectionScroll={() => {
-          muteOnScrollRef.current = true;
-          fullpageRef.current.style.overflowY = "hidden";
-        }}
-        onFinishedSectionScroll={() => {
-          muteOnScrollRef.current = false;
-          fullpageRef.current.style.overflowY = "scroll";
         }}
         orientation={"vertical"}
         scrollDuration={1300}
