@@ -1,13 +1,10 @@
 import React from "react";
-import {
-  useFullPage,
-  OnScrollFullpage,
-} from "../../../hooks/fullpage_hooks/useFullPage";
+import { useFullPage } from "../../../hooks/fullpage_hooks/useFullPage";
 import { useOnScrollFullpageWhenPercentView } from "../../../hooks/fullpage_hooks/useOnScrollFullpageWhenPercentView";
 import { useHashRoute } from "../../../hooks/useHashRoute";
 import { OrientationType, orientationSetterValue } from "../direction-utils";
 import { inOutSine } from "../ease-utils";
-import { FullpageBase, FullpageBaseRef } from "../fullpage-base/fullpage-base";
+import { FullpageBaseRef } from "../fullpage-base/fullpage-base";
 
 type RouterPath = `/#${string}`;
 
@@ -62,16 +59,6 @@ export const FullpageHashRoute: React.FC<Props> = ({
       goToSectionByIndex(idx);
     }
   }, [hashRoute]);
-
-  const onScrollMain = React.useCallback<OnScrollFullpage>(
-    (o) => {},
-    [
-      sectionRefs.current,
-      getCurrentSectionIndex,
-      autoScroll,
-      fullpageBaseProps.disableSectionScroll,
-    ]
-  );
 
   return (
     <FullpageBase

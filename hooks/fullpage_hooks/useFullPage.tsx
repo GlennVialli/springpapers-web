@@ -39,6 +39,7 @@ const scrollToSection = (params: {
     if (timer !== null) clearTimeout(timer);
     timer = setTimeout(() => {
       params.onFinished?.();
+      params.scrolledRefEl.removeEventListener("scroll", scrollListener);
     }, 150);
 
     // const target = evt.currentTarget;
@@ -220,7 +221,6 @@ export const useFullPage = () => {
 
   const goToSectionByIndex = React.useCallback(
     (index: number) => {
-      console.log(index);
       setSelectedSectionIndex(index);
     },
     [setSelectedSectionIndex]
