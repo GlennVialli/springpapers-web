@@ -2,7 +2,7 @@ import React from "react";
 import { useFullPage } from "../../../hooks/fullpage_hooks/useFullPage";
 import { useOnScrollFullpageWhenPercentView } from "../../../hooks/fullpage_hooks/useOnScrollFullpageWhenPercentView";
 import { useHashRoute } from "../../../hooks/useHashRoute";
-import { OrientationType, orientationSetterValue } from "../direction-utils";
+import { OrientationType } from "../direction-utils";
 import { inOutSine } from "../ease-utils";
 import { FullpageBaseRef } from "../fullpage-base/fullpage-base";
 
@@ -63,22 +63,32 @@ export const FullpageHashRoute: React.FC<Props> = ({
     <FullpageBase
       {...fullpageBaseProps}
       orientation={orientation}
-      onStartSectionScroll={() => {}}
-      onFinishedSectionScroll={() => {
-        setDisableSectionScroll(false);
-      }}
       onScrollFullpage={(o) => {
-        if (
-          autoScroll === false &&
-          fullpageBaseProps.disableSectionScroll === false
-        ) {
-          setDisableSectionScroll(true);
-        }
         onScrollFullpageWhenPercentView(o);
       }}
       scrollDuration={scrollDuration ? scrollDuration : 2500}
       scrollEase={scrollEase ? scrollEase : inOutSine}
       ref={mainRef}
+      onMouseUp={() => {
+        if (autoScroll === false) {
+          setDisableSectionScroll(false);
+        }
+      }}
+      onTouchStart={() => {
+        if (autoScroll === false) {
+          setDisableSectionScroll(false);
+        }
+      }}
+      onMouseDown={() => {
+        if (autoScroll === false) {
+          setDisableSectionScroll(true);
+        }
+      }}
+      onTouchEnd={() => {
+        if (autoScroll === false) {
+          setDisableSectionScroll(true);
+        }
+      }}
     >
       {sectionRouteRefArr.map((s, i) => (
         <FullpageSection

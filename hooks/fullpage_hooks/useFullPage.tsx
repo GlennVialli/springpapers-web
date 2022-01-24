@@ -41,19 +41,6 @@ const scrollToSection = (params: {
       params.onFinished?.();
       params.scrolledRefEl.removeEventListener("scroll", scrollListener);
     }, 150);
-
-    // const target = evt.currentTarget;
-    // const targetScrollPosition = directionSetterValue({
-    //   horizontalValue: target.scrollLeft,
-    //   verticalValue: target.scrollTop,
-    //   direction: params.direction,
-    // });
-
-    // const offset = Math.abs(targetScrollPosition - position);
-    // if (offset >= 0 && offset <= params.maxOffset) {
-    //   params.onFinished?.();
-    //   target.removeEventListener("scroll", scrollListener);
-    // }
   };
 
   if (
@@ -148,11 +135,7 @@ const FullpageBase = React.forwardRef<
       return;
     }
 
-    if (params.disableSectionScroll) {
-      params.onFinishedSectionScroll?.();
-      return;
-    }
-
+    if (params.disableSectionScroll) return;
     if (!sectionRefs.current[0]) return;
     const offsetAdjustment = orientationSetterValue({
       horizontalValue: -sectionRefs.current[0].offsetLeft,
