@@ -4,10 +4,12 @@ import { useOnScrollFullpageWhenPercentView } from "../../../hooks/fullpage_hook
 import { useHashRoute } from "../../../hooks/useHashRoute";
 import { OrientationType } from "../direction-utils";
 import { inOutSine } from "../ease-utils";
-import { FullpageBaseRef } from "../fullpage-base/fullpage-base";
 
 type RouterPath = `/#${string}`;
 
+type FullpageBaseRef = {
+  component: JSX.Element;
+};
 type FullpageRouterSectionRef = FullpageBaseRef & {
   routerPath: RouterPath;
 };
