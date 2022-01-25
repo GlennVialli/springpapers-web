@@ -41,13 +41,18 @@ const Layout: React.FC<Props> = ({ children, routers }) => {
       </Head>
       <div className="layoutContainer">
         <div className="header">
-          <Tabs value={tabValue}>
-            {routers.map((r) => (
-              <Link href={r.routerPath} shallow={true} key={r.routerPath}>
-                <Tab label={r.labelRoute} />
-              </Link>
-            ))}
-          </Tabs>
+          <div className="topHeader zigzag-border-bottom">
+            <h3>Spring Papers Title</h3>
+          </div>
+          <div className="barHeader">
+            <Tabs value={tabValue}>
+              {routers.map((r) => (
+                <Link href={r.routerPath} shallow={true} key={r.routerPath}>
+                  <Tab label={r.labelRoute} />
+                </Link>
+              ))}
+            </Tabs>
+          </div>
         </div>
         <div className="layout">{children}</div>
       </div>

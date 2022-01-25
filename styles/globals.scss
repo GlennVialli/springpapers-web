@@ -16,6 +16,25 @@ a {
   box-sizing: border-box;
 }
 
+.zigzag-border-bottom {
+  position: relative;
+}
+.zigzag-border-bottom:after {
+  background: radial-gradient(circle, #ffffff 10px, transparent 0),
+    linear-gradient(0deg, #ffffff 18px, transparent 0),
+    linear-gradient(-0deg, #ffffff 18px, transparent 0);
+  background-position: left-bottom;
+  background-repeat: repeat-x;
+  background-size: 33px 37px;
+  content: "";
+  display: block;
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+  width: 100%;
+  height: 36px;
+}
+
 .layoutContainer {
   display: flex;
   flex-direction: row;
@@ -24,15 +43,35 @@ a {
 
 .layout {
   width: 100%;
-  margin-top: 100px;
-  height: calc(100% - 100px);
+  margin-top: 340px;
+  height: calc(100% - 340px);
 }
 
 .header {
   position: fixed;
   top: 0;
   width: 100%;
-  padding: 10px 0;
+  height: 340px;
+  // padding: 10px 0;
+  .topHeader {
+    background-color: rgb(237, 235, 230);
+    height: 70%;
+    width: 100%;
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+    justify-content: center;
+    h3 {
+      margin: 0;
+    }
+  }
+  .barHeader {
+    height: 30%;
+    width: 100%;
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+  }
 }
 
 #__next {
