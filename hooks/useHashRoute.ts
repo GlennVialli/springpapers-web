@@ -23,7 +23,7 @@ export const useHashRoute = () => {
 
   useEffect(() => {
     // console.log(verbose, routerHash, window.location.hash, Router.asPath);
-    // window.location.hash = routerHash.substring(2);
+    window.location.hash = routerHash.substring(2);
   }, [routerHash]);
 
   return routerHashState;

@@ -45,11 +45,14 @@ const Layout: React.FC<Props> = ({ children, routers }) => {
             <h3>Spring Papers Title</h3>
           </div>
           <div className="barHeader">
-            <Tabs value={tabValue}>
+            <Tabs
+              value={tabValue}
+              onChange={(e, v) =>
+                routers[v] ? setHashRoute(routers[v].routerPath) : {}
+              }
+            >
               {routers.map((r) => (
-                <Link href={r.routerPath} shallow={true} key={r.routerPath}>
-                  <Tab label={r.labelRoute} />
-                </Link>
+                <Tab label={r.labelRoute} />
               ))}
             </Tabs>
           </div>
