@@ -65,15 +65,29 @@ a {
       margin: 0;
     }
   }
-  .barHeader {
+  .MuiTabs-root {
     height: 30%;
     width: 100%;
     display: flex;
-    flex-flow: column;
+    flex-flow: row;
     align-items: center;
+    overflow: hidden;
 
+    .MuiTabs-flexContainer {
+      display: flex;
+      justify-content: center;
+      // gap: 20px;
+    }
+    .MuiTabs-indicator {
+      display: none;
+    }
     .MuiTab-root {
-      font-size: 1.7rem;
+      font-size: 0.9rem;
+      min-width: 150px;
+      @media (min-width: 600px) {
+        min-width: 250px;
+        font-size: 1.7rem;
+      }
       &.MuiTab-labelIcon {
         .MuiTab-wrapper {
           flex-direction: row;

@@ -44,21 +44,22 @@ const Layout: React.FC<Props> = ({ children, routers }) => {
           <div className="topHeader zigzag-border-bottom">
             <h3>Spring Papers Title</h3>
           </div>
-          <div className="barHeader">
-            <Tabs
-              value={tabValue}
-              onChange={(e, v) =>
-                routers[v] ? setHashRoute(routers[v].routerPath) : {}
-              }
-            >
-              {routers.map((r) => (
-                <Tab
-                  label={r.labelRoute}
-                  icon={<img src="/SP-Icon-bunga.png" alt="Vercel Logo" />}
-                />
-              ))}
-            </Tabs>
-          </div>
+
+          <Tabs
+            value={tabValue}
+            onChange={(e, v) =>
+              routers[v] ? setHashRoute(routers[v].routerPath) : {}
+            }
+            variant="scrollable"
+            scrollButtons="on"
+          >
+            {routers.map((r) => (
+              <Tab
+                label={r.labelRoute}
+                icon={<img src="/SP-Icon-bunga.png" alt="Vercel Logo" />}
+              />
+            ))}
+          </Tabs>
         </div>
         <div className="layout">{children}</div>
       </div>
