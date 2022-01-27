@@ -71,6 +71,34 @@ a {
     display: flex;
     flex-flow: column;
     align-items: center;
+
+    .MuiTab-root {
+      font-size: 1.7rem;
+      &.MuiTab-labelIcon {
+        .MuiTab-wrapper {
+          flex-direction: row;
+          img {
+            display: none;
+            width: 1.2rem;
+            margin-right: 8px;
+            margin-bottom: 0;
+          }
+        }
+
+        &.Mui-selected {
+          .MuiTab-wrapper {
+            img {
+              display: inherit;
+            }
+          }
+        }
+      }
+      &.Mui-selected {
+        &.MuiTab-textColorInherit {
+          color: rgb(191, 168, 117);
+        }
+      }
+    }
   }
 }
 

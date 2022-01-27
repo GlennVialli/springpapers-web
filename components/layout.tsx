@@ -52,7 +52,10 @@ const Layout: React.FC<Props> = ({ children, routers }) => {
               }
             >
               {routers.map((r) => (
-                <Tab label={r.labelRoute} />
+                <Tab
+                  label={r.labelRoute}
+                  icon={<img src="/SP-Icon-bunga.png" alt="Vercel Logo" />}
+                />
               ))}
             </Tabs>
           </div>
