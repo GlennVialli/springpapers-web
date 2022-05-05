@@ -59,6 +59,19 @@ a {
   width: 100%;
   height: 340px;
   // padding: 10px 0;
+  .cap-complete {
+    position: absolute;
+    z-index: 1;
+    width: 110px;
+    top: 167px;
+    @media (min-width: 600px) {
+      width: 250px;
+      top: 110px;
+    }
+    img {
+      width: 100%;
+    }
+  }
   .topHeader {
     background-color: rgb(237, 235, 230);
     height: 70%;
@@ -136,20 +149,59 @@ a {
 
 /* Hide scrollbar for Chrome, Safari and Opera */
 .fullpage-base-container::-webkit-scrollbar {
-  /* display: none; */
+  width: 6px; /* width of the entire scrollbar */
+  height: 6px;
+  @media (min-width: 600px) {
+    width: 20px; /* width of the entire scrollbar */
+    height: 20px;
+  }
 }
 
-// .fullpage-vertical-container {
-//   /* Hide scrollbar for IE, Edge and Firefox */
-//   -ms-overflow-style: none; /* IE and Edge */
-//   scrollbar-width: none; /* Firefox */
+.fullpage-base-container::-webkit-scrollbar-track {
+  background: white; /* color of the tracking area */
+}
 
-//   section {
-//     height: 100%;
+.fullpage-base-container::-webkit-scrollbar-thumb {
+  // background-color: rgb(237, 235, 230); /* color of the scroll thumb */
+  border-radius: 20px; /* roundness of the scroll thumb */
+  border: 1px solid rgb(237, 235, 230); /* creates padding around scroll thumb */
+  @media (min-width: 600px) {
+    border: 3px solid rgb(237, 235, 230); /* creates padding around scroll thumb */
+  }
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+// .fullpage-base-container::-webkit-scrollbar {
+//   width: 6px; /* width of the entire scrollbar */
+//   height: 6px;
+//   @media (min-width: 600px) {
+//     width: 20px; /* width of the entire scrollbar */
+//     height: 20px;
 //   }
 // }
 
-// /* Hide scrollbar for Chrome, Safari and Opera */
-// .fullpage-vertical-container::-webkit-scrollbar {
-//   /* display: none; */
+// .fullpage-base-container::-webkit-scrollbar-track {
+//   background: white; /* color of the tracking area */
+// }
+
+// .fullpage-base-container::-webkit-scrollbar-thumb {
+//   // background-color: rgb(237, 235, 230); /* color of the scroll thumb */
+//   border-radius: 20px; /* roundness of the scroll thumb */
+//   border: 1px solid; /* creates padding around scroll thumb */
+//   border-image-source: linear-gradient(to left, #00c853, #b2ff59);
+//   @media (min-width: 600px) {
+//     border: 5px solid; /* creates padding around scroll thumb */
+//     border-image-slice: 1;
+//     border-image-source: linear-gradient(
+//       90deg,
+//       rgb(237, 235, 230),
+//       rgba(255, 0, 0, 0) 70.71%
+//     );
+//     // border-image-slice: 50%;
+//     // border-image-width: 100%;
+//     // border-image-repeat: initial;
+//     // border-image-outset: 5;
+//     // border-image-source: url("/border-diamonds.png");
+//     // border-radius: 20px; /* roundness of the scroll thumb */
+//   }
 // }

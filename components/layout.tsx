@@ -7,6 +7,7 @@ import { Table } from "@material-ui/core";
 import { useRouter } from "next/dist/client/router";
 import { useHashRoute } from "../hooks/useHashRoute";
 import { useWindowSize } from "../hooks/useWindowSize";
+import zIndex from "@material-ui/core/styles/zIndex";
 
 type RouterPath = `/#${string}`;
 export type RouterLayout = {
@@ -41,6 +42,9 @@ const Layout: React.FC<Props> = ({ children, routers }) => {
       </Head>
       <div className="layoutContainer">
         <div className="header">
+          <div className="cap-complete">
+            <img src="/img/SP-Image1.png" />
+          </div>
           <div className="topHeader zigzag-border-bottom">
             <h3>Spring Papers Title</h3>
           </div>
@@ -56,7 +60,7 @@ const Layout: React.FC<Props> = ({ children, routers }) => {
             {routers.map((r) => (
               <Tab
                 label={r.labelRoute}
-                icon={<img src="/SP-Icon-bunga.png" alt="Vercel Logo" />}
+                icon={<img src="/img/SP-Icon-bunga.png" alt="Vercel Logo" />}
               />
             ))}
           </Tabs>
