@@ -46,7 +46,10 @@ const Layout: React.FC<Props> = ({ children, routers }) => {
             <img src="/img/SP-Image1.png" />
           </div>
           <div className="topHeader zigzag-border-bottom">
-            <h3>Spring Papers Title</h3>
+            {/* <h3>Spring Papers Title</h3> */}
+            <div className="title">
+              <img src="/img/SP-Logo.png" />
+            </div>
           </div>
 
           <Tabs
