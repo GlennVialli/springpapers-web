@@ -66,15 +66,7 @@ a {
     height: 440px;
   }
   // padding: 10px 0;
-  .title {
-    width: 150px;
-    @media (min-width: 600px) {
-      width: 500px;
-    }
-    img {
-      width: 100%;
-    }
-  }
+
   .cap-complete {
     position: absolute;
     z-index: 1;
@@ -99,6 +91,15 @@ a {
     justify-content: center;
     h3 {
       margin: 0;
+    }
+    .title {
+      width: 150px;
+      @media (min-width: 600px) {
+        width: 500px;
+      }
+      img {
+        width: 100%;
+      }
     }
   }
 
