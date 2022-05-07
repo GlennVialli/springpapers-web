@@ -46,8 +46,13 @@ const Layout: React.FC<Props> = ({ children, routers }) => {
             <img src="/img/SP-Image1.png" />
           </div>
           <div className="topHeader zigzag-border-bottom">
+            <div className="search-bar"></div>
             <div className="title">
               <img src="/img/SP-Logo.png" />
+            </div>
+            <div className="menu-top-header">
+              <img src="/img/SP-Icon-login.png" style={{ width: "50%" }} />
+              <img src="/img/SP-Icon-cart.png" style={{ width: "50%" }} />
             </div>
           </div>
 
