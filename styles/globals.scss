@@ -89,12 +89,15 @@ a {
     flex-flow: row;
     align-items: center;
     justify-content: space-between;
+    flex-wrap: wrap;
     h3 {
       margin: 0;
     }
     .title {
       width: 100%;
+      order: 3;
       @media (min-width: 600px) {
+        order: 2;
         width: 25%;
       }
       img {
@@ -104,8 +107,9 @@ a {
     .search-bar {
       width: 30%;
       height: 10px;
-      align-self: baseline;
+      order: 1;
       @media (min-width: 600px) {
+        order: 1;
         width: 10%;
         margin-left: 5%;
         align-self: initial;
@@ -114,7 +118,9 @@ a {
     .menu-top-header {
       width: 30%;
       align-self: baseline;
+      order: 2;
       @media (min-width: 600px) {
+        order: 3;
         width: 10%;
         margin-right: 5%;
         align-self: initial;
