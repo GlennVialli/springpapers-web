@@ -114,10 +114,26 @@ a {
       order: 1;
       @media (min-width: 600px) {
         order: 1;
-        width: 10%;
+        width: 15%;
         margin-left: 5%;
         align-self: initial;
       }
+      &:hover,
+      &:focus-within {
+        .search-icon {
+          .MuiSvgIcon-root {
+            path {
+              fill: rgb(191, 168, 117);
+            }
+          }
+        }
+        .MuiInputBase-root {
+          border-color: rgb(191, 168, 117);
+          border-width: 1px;
+          border-style: solid;
+        }
+      }
+
       .search-icon {
         display: flex;
         align-items: center;
@@ -147,11 +163,31 @@ a {
       width: 30%;
       align-self: baseline;
       order: 2;
+      display: flex;
       @media (min-width: 600px) {
         order: 3;
-        width: 10%;
-        margin-right: 5%;
+        width: 12%;
+        margin-right: 3%;
         align-self: initial;
+      }
+      div {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        font-size: 0.7rem;
+        @media (min-width: 600px) {
+          font-size: 1rem;
+        }
+        img {
+          width: 100%;
+          padding: 5px;
+          @media (min-width: 600px) {
+            padding: 10px;
+          }
+        }
+        &:hover {
+          color: rgb(191, 168, 117);
+        }
       }
     }
   }

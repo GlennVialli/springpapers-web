@@ -1,13 +1,10 @@
 import Head from "next/head";
-import Link from "next/link";
 import React from "react";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
-import { InputBase, Table } from "@material-ui/core";
-import { useRouter } from "next/dist/client/router";
+import { InputBase } from "@material-ui/core";
 import { useHashRoute } from "../hooks/useHashRoute";
 import { useWindowSize } from "../hooks/useWindowSize";
-import SearchIcon from "@material-ui/icons/Search";
 
 type RouterPath = `/#${string}`;
 export type RouterLayout = {
@@ -71,8 +68,14 @@ const Layout: React.FC<Props> = ({ children, routers }) => {
               <img src="/img/SP-Logo.png" />
             </div>
             <div className="menu-top-header">
-              <img src="/img/SP-Icon-login.png" style={{ width: "50%" }} />
-              <img src="/img/SP-Icon-cart.png" style={{ width: "50%" }} />
+              <div>
+                <img src="/img/SP-Icon-login.png" />
+                <span>LOG IN</span>
+              </div>
+              <div>
+                <img src="/img/SP-Icon-cart.png" />
+                <span>CART</span>
+              </div>
             </div>
           </div>
 
