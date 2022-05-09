@@ -73,6 +73,11 @@ a {
     width: 110px;
     top: 167px;
     @media (min-width: 600px) {
+      width: 150px;
+      top: 265px;
+      left: 55px;
+    }
+    @media (min-width: 930px) {
       width: 230px;
       top: 230px;
       left: 75px;
@@ -100,8 +105,18 @@ a {
     .title {
       width: 100%;
       order: 3;
-      padding-top: 30px;
-      @media (min-width: 600px) {
+      max-width: 800px;
+      margin: auto;
+      min-width: 280px;
+      padding-top: 20px;
+      @media (min-height: 1023px) {
+        padding-top: 0;
+        padding-bottom: 20px;
+      }
+      // padding-top: 25px;
+      // padding-bottom: 30px;
+      @media (min-width: 930px) {
+        padding-bottom: 0;
         order: 2;
         width: 25%;
       }
@@ -112,11 +127,13 @@ a {
     .search-bar {
       display: flex;
       order: 1;
-      @media (min-width: 600px) {
+      width: 40%;
+      @media (min-width: 930px) {
         order: 1;
         width: 15%;
         margin-left: 5%;
         align-self: initial;
+        min-width: 100px;
       }
       &:hover,
       &:focus-within {
@@ -164,9 +181,10 @@ a {
       align-self: baseline;
       order: 2;
       display: flex;
-      @media (min-width: 600px) {
+      @media (min-width: 930px) {
         order: 3;
         width: 12%;
+        min-width: 200px;
         margin-right: 3%;
         align-self: initial;
       }
@@ -187,6 +205,7 @@ a {
         }
         &:hover {
           color: rgb(191, 168, 117);
+          cursor: pointer;
         }
       }
     }
